@@ -1,6 +1,6 @@
 # Surveys
 
-#Časový harmonogram
+# Časový harmonogram
 Časový harmonogram:
 9. 10. 2023 vytvoření githubu a harmonogramu.
 16. 10. 2023 Obeznámení a porozumění projektu.
