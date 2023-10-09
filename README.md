@@ -8,7 +8,7 @@
 21. 1. 2024 uzavření projektu<br>
 22. 1. 2024 počátek zkouškového období,<br>
 
-##Zadání:
+## Zadání:
 Entity (SurveyGQLModel, SurveyTypeGQLModel, AnswerGQLModel)<br>
 Entity (QuestionGQLModel, QuestionTypeGQLModel, QuestionValueGQLModel)<br>
 Modely v databázi pomocí SQLAlchemy, API endpoint typu GraphQL s pomocí knihovny Strawberry.<br>
