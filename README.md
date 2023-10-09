@@ -1,7 +1,7 @@
 # Surveys
 
 ## Časový harmonogram
-9. 10. 2023 vytvoření githubu a harmonogramu. <br>
+9. 10. 2023 vytvoření githubu a harmonogramu.<br>
 16. 10. 2023 Obeznámení a porozumění projektu.<br>
 27. 11. 2023 Vytvoření RU operací.<br>
 15. 1. 2024  Alfa verze<br>
