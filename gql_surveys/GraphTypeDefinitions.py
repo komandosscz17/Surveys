@@ -183,7 +183,7 @@ class QuestionGQLModel:
     def order(self) -> int:
         return self.order
 
-    @strawberryA.field(description="""List of answers""")
+    @strawberryA.field(description="""List of answers related to the user""")
     async def answers(
         self, info: strawberryA.types.Info
     ) -> typing.List["AnswerGQLModel"]:
