@@ -14,9 +14,10 @@ from uoishelpers.resolvers import (
 )
 from uoishelpers.resolvers import putSingleEntityToDb
 
-from gql_surveys.DBDefinitions import BaseModel
 
-from gql_surveys.DBDefinitions import (
+from .DBDefinitions import BaseModel
+
+from .DBDefinitions import (
     SurveyModel,
     QuestionModel,
     AnswerModel,
