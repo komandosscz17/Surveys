@@ -6,6 +6,7 @@ from typing import Annotated
 import datetime
 from contextlib import asynccontextmanager
 from .BaseGQLModel import BaseGQLModel
+from .extra import getLoaders
 
 from .GraphResolvers import (
     resolveAnswersForQuestion,
@@ -82,3 +83,79 @@ class QuestionGQLModel(BaseGQLModel):
 # Queries
 #
 #############################################################
+@strawberryA.field(description="""Question by id""")
+async def question_by_id(
+        self, info: strawberryA.types.Info, id: strawberryA.ID
+    ) -> Union[QuestionGQLModel, None]:
+        return await QuestionGQLModel.resolve_reference(info, id)
+
+
+#############################################################
+#
+# Mutations
+#
+#############################################################
+from typing import Optional
+import datetime
+
+@strawberryA.input
+class QuestionInsertGQLModel:
+    name: str
+    survey_id: strawberryA.ID
+    name_en: Optional[str] = ""
+    type_id: Optional[strawberryA.ID] = None
+    order: Optional[int] = 1
+    id: Optional[strawberryA.ID] = None
+
+@strawberryA.input
+class QuestionUpdateGQLModel:
+    lastchange: datetime.datetime
+    id: strawberryA.ID
+    name: Optional[str] = None
+    name_en: Optional[str] = None
+    type_id: Optional[strawberryA.ID] = None
+    order: Optional[int] = None
+
+@strawberryA.type
+class QuestionResultGQLModel:
+    id: strawberryA.ID = None
+    msg: str = None
+
+    @strawberryA.field(description="""Result of question operation""")
+    async def question(self, info: strawberryA.types.Info) -> Union[QuestionGQLModel, None]:
+        result = await QuestionGQLModel.resolve_reference(info, self.id)
+        return result
+    
+
+@strawberryA.mutation(description="""Updates question value / possible answer""")
+async def question_value_delete(self, info: strawberryA.types.Info, question_value_id: strawberryA.ID) -> QuestionResultGQLModel:
+        loader = getLoaders(info).questionvalues
+        row = await loader.load(question_value_id)
+        await loader.delete(question_value_id)
+        result = QuestionResultGQLModel()
+        result.msg = "ok"
+        result.id = row.id
+        if row is None:
+            result.msg = "fail"           
+        return result
+
+@strawberryA.mutation(description="""Creates new question in the survey""")
+async def question_insert(self, info: strawberryA.types.Info, question: QuestionInsertGQLModel) -> QuestionResultGQLModel:
+        loader = getLoaders(info).questions
+        row = await loader.insert(question)
+        result = QuestionResultGQLModel()
+        result.msg = "ok"
+        result.id = row.id
+        return result
+
+@strawberryA.mutation(description="""Updates question""")
+async def question_update(self, info: strawberryA.types.Info, question: QuestionUpdateGQLModel) -> QuestionResultGQLModel:
+        loader = getLoaders(info).questions
+        row = await loader.update(question)
+        result = QuestionResultGQLModel()
+        result.msg = "ok"
+        result.id = question.id
+        if row is None:
+            result.msg = "fail"           
+        return result
+    

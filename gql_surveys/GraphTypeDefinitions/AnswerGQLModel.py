@@ -75,3 +75,56 @@ class AnswerGQLModel:
 # Queries
 #
 #############################################################
+@strawberryA.field(description="""Answer by id""")
+async def answer_by_id(
+        self, info: strawberryA.types.Info, id: strawberryA.ID
+    ) -> Union[AnswerGQLModel, None]:
+        print(id, flush=True)
+        return await AnswerGQLModel.resolve_reference(info, id)
+    
+
+@strawberryA.field(description="""Answer by user""")
+async def answers_by_user(
+        self, info: strawberryA.types.Info, user_id: strawberryA.ID
+    ) -> Union[AnswerGQLModel, None]:
+        loader = getLoaders(info).answers
+        result = await loader.filter_by(user_id=user_id)
+        return result  
+
+
+#############################################################
+#
+# Mutations
+#
+#############################################################
+from typing import Optional
+import datetime
+
+@strawberryA.input
+class AnswerUpdateGQLModel:
+    lastchange: datetime.datetime
+    id: strawberryA.ID
+    value: Optional[str] = None
+    aswered: Optional[bool] = None   
+    expired: Optional[bool] = None   
+    
+@strawberryA.type
+class AnswerResultGQLModel:
+    id: strawberryA.ID = None
+    msg: str = None
+
+    @strawberryA.field(description="""Result of answer operation""")
+    async def answer(self, info: strawberryA.types.Info) -> Union[AnswerGQLModel, None]:
+        result = await AnswerGQLModel.resolve_reference(info, self.id)
+        return result
+    
+@strawberryA.mutation(description="""Allows update a question.""")
+async def answer_update(self, info: strawberryA.types.Info, answer: AnswerUpdateGQLModel) -> AnswerResultGQLModel:
+        loader = getLoaders(info).answers
+        row = await loader.update(answer)
+        result = AnswerResultGQLModel()
+        result.msg = "ok"
+        result.id = answer.id
+        if row is None:
+            result.msg = "fail"           
+        return result
