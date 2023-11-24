@@ -30,7 +30,9 @@ QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLM
     keys=["id"], description="""Entity representing an access to information"""
 )
 class QuestionValueGQLModel(BaseGQLModel):
-    
+    @classmethod
+    def getLoader(cls, info):
+        return getLoaders(info).questionvalues
 
     @strawberryA.field(description="""primary key""")
     def id(self) -> strawberryA.ID:

@@ -12,5 +12,5 @@ class BaseGQLModel:
         loader = cls.getLoader(info)
         result = await loader.load(id)
         if result is not None:
-             result.__strawberry_definition__ = cls.__strawberry_definition_
+             result.__strawberry_definition__ = cls.__strawberry_definition__
         return result

@@ -2,7 +2,7 @@ from sqlalchemy.future import select
 import strawberry
 
 from gql_surveys.DBDefinitions import (
-    BaseModel,
+    BaseModel,RoleModel
 )
 from gql_surveys.DBDefinitions import GroupTypeModel, RoleTypeModel
 

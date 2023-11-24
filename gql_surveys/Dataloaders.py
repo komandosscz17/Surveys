@@ -72,6 +72,7 @@ async def createLoaders(asyncSessionMaker, models=dbmodels):
     
     attrs = {}
     for key, DBModel in models.items():
+        print("creating loader ", key)
         attrs[key] = property(cache(createLambda(key, DBModel)))
     
     Loaders = type('Loaders', (), attrs)   

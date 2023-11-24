@@ -32,6 +32,9 @@ QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLM
 )
 class AnswerGQLModel:
     @classmethod
+    def getLoader(cls, info):
+        return getLoaders(info).answers
+    @classmethod
     async def resolve_reference(cls, info: strawberryA.types.Info, id: strawberryA.ID):
         loader = getLoaders(info).answers
         result = await loader.load(id)

@@ -29,7 +29,9 @@ from .GraphResolvers import (
     description="""Entity representing a relation between an user and a group""",
 )
 class QuestionTypeGQLModel(BaseGQLModel):
-
+    @classmethod
+    def getLoader(cls, info):
+        return getLoaders(info).questiontypes
 
     @strawberryA.field(description="""primary key""")
     def id(self) -> strawberryA.ID:
