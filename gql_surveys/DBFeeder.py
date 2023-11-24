@@ -227,22 +227,22 @@ async def randomSurveyData(session):
     ]
     asyncSessionMaker = lambda: session
     #await putPredefinedStructuresIntoTable(asyncSessionMaker, UserModel, lambda: users)
-    await putPredefinedStructuresIntoTable(
-        asyncSessionMaker, SurveyModel, lambda: surveys
-    )
-    await putPredefinedStructuresIntoTable(
-        asyncSessionMaker, QuestionModel, lambda: questions
-    )
-    await putPredefinedStructuresIntoTable(
-        asyncSessionMaker, AnswerModel, lambda: answers
-    )
+    
+    asyncSessionMaker, SurveyModel, lambda: surveys
+    
+    
+    asyncSessionMaker, QuestionModel, lambda: questions
+    
+   
+    asyncSessionMaker, AnswerModel, lambda: answers
+
     return surveys[0]["id"]
 
 
 async def SystemInitialization(asyncSessionMaker):
-    await putPredefinedStructuresIntoTable(
-        asyncSessionMaker, QuestionTypeModel, determineQuestionTypes
-    )
+    
+    asyncSessionMaker, QuestionTypeModel, determineQuestionTypes
+    
 
 
 import os

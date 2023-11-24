@@ -81,7 +81,7 @@ class SurveyGQLModel(BaseGQLModel):
 async def survey_by_id(
         self, info: strawberryA.types.Info, id: strawberryA.ID
     ) -> Union[SurveyGQLModel, None]:
-        return await SurveyGQLModel.resolve_reference(info, id)
+        return await SurveyGQLModel.resolve_reference(info=info, id=id)
 
 @strawberryA.field(description="""Page of surveys""")
 async def survey_page(

@@ -1,9 +1,32 @@
 from uoishelpers.dataloaders import createIdLoader, createFkeyLoader
 from functools import cache
+from aiodataloader import DataLoader
+import datetime
+import aiohttp
+import asyncio
+import os
+import logging
+from uoishelpers.resolvers import select, update, delete
+
 
 from gql_surveys.DBDefinitions import (
-    SurveyModel, SurveyTypeModel, QuestionModel, QuestionTypeModel, QuestionValueModel, AnswerModel)
+    SurveyModel, 
+    SurveyTypeModel, 
+    QuestionModel,
+    QuestionTypeModel,
+    QuestionValueModel, 
+    AnswerModel
+    )
 
+dbmodels = {
+    "surveys": SurveyModel, 
+    "surveytypes": SurveyTypeModel, 
+    "questions": QuestionModel, 
+    "questiontypes": QuestionTypeModel, 
+    "questionvalues": QuestionValueModel, 
+    "answers": AnswerModel
+    
+}
 async def createLoaders_3(asyncSessionMaker):
     class Loaders:
         @property
@@ -42,15 +65,6 @@ async def createLoaders_3(asyncSessionMaker):
 from uoishelpers.dataloaders import createIdLoader, createFkeyLoader
 
 
-dbmodels = {
-    "surveys": SurveyModel, 
-    "surveytypes": SurveyTypeModel, 
-    "questions": QuestionModel, 
-    "questiontypes": QuestionTypeModel, 
-    "questionvalues": QuestionValueModel, 
-    "answers": AnswerModel
-    
-}
 
 async def createLoaders(asyncSessionMaker, models=dbmodels):
     def createLambda(loaderName, DBModel):
