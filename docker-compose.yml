@@ -83,7 +83,7 @@ services:
     depends_on:
       # kontejnery, kter musi byt spusteny drive
       - postgres
-      - apollo
+    
 
 
   redis:
