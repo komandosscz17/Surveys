@@ -37,7 +37,7 @@ docker-compose up
 
 pytest --cov-report term-missing --cov=gql_surveys tests
 
-#Zadání
+# Zadání
 Entity (SurveyGQLModel, SurveyTypeGQLModel, AnswerGQLModel)
 Entity (QuestionGQLModel, QuestionTypeGQLModel, QuestionValueGQLModel)
 Modely v databázi pomocí SQLAlchemy, API endpoint typu GraphQL s pomocí knihovny Strawberry.
