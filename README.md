@@ -36,3 +36,15 @@ docker-compose up
 <br/><br/>
 
 pytest --cov-report term-missing --cov=gql_surveys tests
+
+# Zadání
+Entity (SurveyGQLModel, SurveyTypeGQLModel, AnswerGQLModel)<br/><br/>
+Entity (QuestionGQLModel, QuestionTypeGQLModel, QuestionValueGQLModel)<br/><br/>
+Modely v databázi pomocí SQLAlchemy, API endpoint typu GraphQL s pomocí knihovny Strawberry.<br/><br/>
+Přístup k databázi řešte důsledně přes AioDataloder, resp. (https://github.com/hrbolek/uoishelpers/blob/main/uoishelpers/dataloaders.py).<br/><br/>
+Zabezpečte kompletní CRUD operace nad entitami ExternalIdModel, ExternalIdTypeModel, ExternalIdCategoryModel<br/><br/>
+CUD operace jako návratový typ nejméně se třemi prvky id, msg a „entityresult“ (pojmenujte adekvátně podle dotčené entity), vhodné přidat možnost nadřízené entity, speciálně pro operaci D.<br/><br/>
+Řešte autorizaci operací (permission classes).<br/><br/>
+Kompletní CRUD dotazy na GQL v souboru externalids_queries.json (dictionary), jméno klíče nechť vhodně identifikuje operaci, hodnota je dictionary s klíči query (obsahuje parametrický dotaz) nebo mutation (obsahuje parametrické mutation) a variables (obsahuje dictionary jako testovací hodnoty).<br/><br/>
+Kompletní popisy API v kódu (description u GQLModelů) a popisy DB vrstvy (comment u DBModelů).<br/><br/>
+Zabezpečte více jak 90% code test coverage (standard pytest).<br/><br/>
