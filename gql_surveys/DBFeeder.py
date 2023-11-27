@@ -241,7 +241,7 @@ async def randomSurveyData(session):
 
 async def SystemInitialization(asyncSessionMaker):
     
-    asyncSessionMaker, QuestionTypeModel, determineQuestionTypes
+    asyncSessionMaker, QuestionTypeModel, get_demodata
     
 
 
