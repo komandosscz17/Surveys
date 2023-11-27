@@ -16,12 +16,13 @@ from typing import Annotated
 
 from .GraphResolvers import (
     resolveSurveyById,
-    resolveQuestionById,
-    resolveAnswerById,
-    resolveQuestionTypeById,
-    resolveAnswersForQuestion,
-    resolveAnswersForUser,
     resolveQuestionForSurvey,
+    resolve_id,
+    resolve_lastchange,
+    resolve_name,
+    resolve_name_en
+    
+  
 )
 
 @asynccontextmanager
@@ -45,18 +46,11 @@ class SurveyGQLModel(BaseGQLModel):
     def getLoader(cls, info):
         return getLoaders(info).surveys
         
-
-    @strawberryA.field(description="""primary key""")
-    def id(self) -> strawberryA.ID:
-        return self.id
-
-    @strawberryA.field(description="""Timestamp""")
-    def lastchange(self) -> datetime.datetime:
-        return self.lastchange
-
-    @strawberryA.field(description="""Survey name""")
-    def name(self) -> str:
-        return self.name
+    id = resolve_id
+    name = resolve_name
+    lastchange = resolve_lastchange
+    name_en = resolve_name_en
+   
 
     @strawberryA.field(description="""List""")
     async def questions(
@@ -82,14 +76,15 @@ class SurveyGQLModel(BaseGQLModel):
 #############################################################
 @strawberryA.field(description="""Finds a survey by its id""")
 async def survey_by_id(
-        self, info: strawberryA.types.Info, id: strawberryA.ID
-    ) -> Union[SurveyGQLModel, None]:
-        return await SurveyGQLModel.resolve_reference(info=info, id=id)
+        self, info: strawberryA.types.Info, id: uuid.UUID
+    ) -> typing.Optional[SurveyGQLModel]:
+        result = await SurveyGQLModel.resolve_reference(info=info,  id=str(id))
+        return result
 
 @strawberryA.field(description="""Page of surveys""")
 async def survey_page(
         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
-    ) -> List[SurveyGQLModel]:
+    ) -> typing.List[SurveyGQLModel]:
         loader = getLoaders(info).surveys
         result = await loader.page(skip, limit)
         return result
@@ -123,12 +118,12 @@ class SurveyInsertGQLModel:
     name_en: Optional[str] = ""
 
     type_id: Optional[strawberryA.ID] = None
-    id: Optional[strawberryA.ID] = None
+    id: typing.Optional[uuid.UUID]  = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
 
 @strawberryA.input
 class SurveyUpdateGQLModel:
     lastchange: datetime.datetime
-    id: strawberryA.ID
+    id: uuid.UUID
     name: Optional[str] = None
     name_en: Optional[str] = None
     type_id: Optional[strawberryA.ID] = None

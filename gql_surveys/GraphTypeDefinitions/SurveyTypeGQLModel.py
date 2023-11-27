@@ -15,13 +15,11 @@ import datetime
 from typing import Annotated
 
 from .GraphResolvers import (
-    resolveSurveyById,
-    resolveQuestionById,
-    resolveAnswerById,
-    resolveQuestionTypeById,
-    resolveAnswersForQuestion,
-    resolveAnswersForUser,
-    resolveQuestionForSurvey,
+    resolve_id,
+    resolve_lastchange,
+    resolve_name,
+    resolve_name_en
+    
 )
         
 @strawberryA.federation.type(
@@ -33,17 +31,10 @@ class SurveyTypeGQLModel(BaseGQLModel):
     def getLoader(cls, info):
         return getLoaders(info).surveytypes
 
-    @strawberryA.field(description="""primary key""")
-    def id(self) -> strawberryA.ID:
-        return self.id
-
-    @strawberryA.field(description="""Timestamp""")
-    def lastchange(self) -> datetime.datetime:
-        return self.lastchange
-
-    @strawberryA.field(description="""Survey name""")
-    def name(self) -> str:
-        return self.name
+    id = resolve_id
+    name = resolve_name
+    lastchange = resolve_lastchange
+    name_en = resolve_name_en
 #############################################################
 #
 # Queries
@@ -60,7 +51,7 @@ async def survey_type_page(
     
 @strawberryA.field(description="""Finds a survey type by its id""")
 async def survey_type_by_id(
-        self, info: strawberryA.types.Info, id: strawberryA.ID
+        self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[SurveyTypeGQLModel, None]:
-        return await SurveyTypeGQLModel.resolve_reference(info, id)
+        return await SurveyTypeGQLModel.resolve_reference(info=info, id=str(id))
     

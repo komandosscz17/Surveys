@@ -24,7 +24,7 @@ async def withInfo(info):
         finally:
             pass
 
-from .extra import getLoaders, AsyncSessionFromInfo
+
 from .UserGQLModel import UserGQLModel
 from .QuestionValueGQLModel import QuestionValueGQLModel
 from .QuestionGQLModel import QuestionGQLModel

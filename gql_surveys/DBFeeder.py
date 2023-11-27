@@ -1,5 +1,10 @@
 from doctest import master
 from functools import cache
+import os
+import json
+from uoishelpers.feeders import ImportModels
+import datetime
+
 from gql_surveys.DBDefinitions import (
     QuestionTypeModel,
     QuestionValueModel,
@@ -12,7 +17,7 @@ from gql_surveys.DBDefinitions import (
 import random
 import itertools
 from functools import cache
-
+import datetime
 from sqlalchemy.future import select
 
 
@@ -33,22 +38,17 @@ def singleCall(asyncFunc):
 
 
 
-@cache
-def determineQuestionTypes():
+
+
+
+def get_demodata():
+    userID1 = "8188a23c-8fd4-11ed-a6d4-0242ac110002"
+    userID2 = "81701780-8fd4-11ed-a6d4-0242ac110002"
     questionTypes = [
         {"id": "ad0f53fb-240b-47de-ab1d-871bbde6f973", "name": "Uzavřené"},
         {"id": "949d74a2-63b1-4478-82f1-e025d8bc6c8b", "name": "Otevřené"},
         {"id": "2a6a1731-1efa-4644-a1d8-5848e4b29ce5", "name": "Škála"},
     ]
-    return questionTypes
-
-
-import datetime
-
-def get_demodata():
-    userID1 = "8188a23c-8fd4-11ed-a6d4-0242ac110002"
-    userID2 = "81701780-8fd4-11ed-a6d4-0242ac110002"
-    questionTypes = determineQuestionTypes()
     result = {
         "surveyquestiontypes": questionTypes,
         "surveys": [
