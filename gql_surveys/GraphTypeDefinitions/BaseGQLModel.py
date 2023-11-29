@@ -8,7 +8,7 @@ class BaseGQLModel:
         pass
 
     @classmethod
-    async def resolve_reference(cls, info: strawberryA.types.Info, id: strawberryA.ID):
+    async def resolve_reference(cls, info: strawberryA.types.Info, id: uuid.UUID):
         loader = cls.getLoader(info)
         result = await loader.load(id)
         if result is not None:

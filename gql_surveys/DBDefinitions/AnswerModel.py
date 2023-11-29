@@ -15,7 +15,6 @@ from sqlalchemy.orm import relationship
 # from sqlalchemy.ext.declarative import declarative_base
 
 from .BaseModel import BaseModel
-from .UUID import uuid
 from.UUID import (UUIDFKey, UUIDColumn,)
 
 # id = Column(UUID(as_uuid=True), primary_key=True, server_default=sqlalchemy.text("uuid_generate_v4()"),)

@@ -78,7 +78,7 @@ class SurveyGQLModel(BaseGQLModel):
 async def survey_by_id(
         self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> typing.Optional[SurveyGQLModel]:
-        result = await SurveyGQLModel.resolve_reference(info=info,  id=str(id))
+        result = await SurveyGQLModel.resolve_reference(info=info,  id=id)
         return result
 
 @strawberryA.field(description="""Page of surveys""")
@@ -115,26 +115,25 @@ import datetime
 @strawberryA.input
 class SurveyInsertGQLModel:
     name: str
-    name_en: Optional[str] = ""
-
-    type_id: Optional[strawberryA.ID] = None
+    name_en: typing.Optional[str] = ""
+    type_id: typing.Optional[uuid.UUID] = None
     id: typing.Optional[uuid.UUID]  = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
 
 @strawberryA.input
 class SurveyUpdateGQLModel:
     lastchange: datetime.datetime
-    id: uuid.UUID
-    name: Optional[str] = None
-    name_en: Optional[str] = None
-    type_id: Optional[strawberryA.ID] = None
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    name: typing.Optional[str] = None
+    name_en: typing.Optional[str] = None
+    type_id: typing.Optional[uuid.UUID] = None
     
 @strawberryA.type
 class SurveyResultGQLModel:
-    id: strawberryA.ID = None
+    id: uuid.UUID = None
     msg: str = None
 
     @strawberryA.field(description="""Result of survey operation""")
-    async def survey(self, info: strawberryA.types.Info) -> Union[SurveyGQLModel, None]:
+    async def survey(self, info: strawberryA.types.Info) -> typing.Optional[SurveyGQLModel]:
         result = await SurveyGQLModel.resolve_reference(info, self.id)
         return result
     
@@ -142,9 +141,7 @@ class SurveyResultGQLModel:
 async def survey_insert(self, info: strawberryA.types.Info, survey: SurveyInsertGQLModel) -> SurveyResultGQLModel:
         loader = getLoaders(info).surveys
         row = await loader.insert(survey)
-        result = SurveyResultGQLModel()
-        result.msg = "ok"
-        result.id = row.id
+        result = SurveyResultGQLModel(id=row.id, msg="ok")
         return result
 
 @strawberryA.mutation(description="""Updates the survey""")
