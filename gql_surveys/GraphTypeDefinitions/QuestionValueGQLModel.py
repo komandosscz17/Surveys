@@ -6,15 +6,13 @@ from contextlib import asynccontextmanager
 import datetime
 from typing import Annotated
 from .extra import getLoaders
+import uuid
 
 from .GraphResolvers import (
-    resolveSurveyById,
-    resolveQuestionById,
-    resolveAnswerById,
-    resolveQuestionTypeById,
-    resolveAnswersForQuestion,
-    resolveAnswersForUser,
-    resolveQuestionForSurvey,
+    resolve_id,
+    resolve_lastchange,
+    resolve_name,
+    resolve_name_en
 )
 @asynccontextmanager
 async def withInfo(info):
@@ -33,22 +31,11 @@ class QuestionValueGQLModel(BaseGQLModel):
     @classmethod
     def getLoader(cls, info):
         return getLoaders(info).questionvalues
-
-    @strawberryA.field(description="""primary key""")
-    def id(self) -> strawberryA.ID:
-        return self.id
-
-    @strawberryA.field(description="""Timestamp""")
-    def lastchange(self) -> datetime.datetime:
-        return self.lastchange
+    id = resolve_id
+    name = resolve_name
+    lastchange = resolve_lastchange
+    name_en = resolve_name_en
     
-    @strawberryA.field(description="""Name aka, value of answer""")
-    def name(self) -> Union[str, None]:
-        return self.name
-    
-    @strawberryA.field(description="""English name aka, value of answer""")
-    def name_en(self) -> Union[str, None]:
-        return self.name_en
 
     @strawberryA.field(description="""order of value""")
     def order(self) -> int:
@@ -56,6 +43,7 @@ class QuestionValueGQLModel(BaseGQLModel):
 
     @strawberryA.field(description="""Question which has this possible answer""")
     async def question(self, info: strawberryA.types.Info) -> Union[QuestionGQLModel, None]:
+        from .QuestionGQLModel import QuestionGQLModel
         result = await QuestionGQLModel.resolve_reference(info, self.question_id)
         return result
 #############################################################
@@ -76,23 +64,23 @@ import datetime
 
 @strawberryA.input
 class QuestionValueInsertGQLModel:
-    question_id: strawberryA.ID
-    name: str
-    name_en: Optional[str] = ""   
-    order: Optional[int] = 1
-    id: Optional[strawberryA.ID] = None
+    question_id: typing.Optional[uuid.UUID] = None
+    name: typing.Optional[str] = None
+    name_en: typing.Optional[str] = ""   
+    order: typing.Optional[int] = None
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
 
 @strawberryA.input
 class QuestionValueUpdateGQLModel:
     lastchange: datetime.datetime
-    id: strawberryA.ID
-    name: Optional[str] = None
-    name_en: Optional[str] = None
-    order: Optional[int] = None
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    name: typing.Optional[str] = None
+    name_en: typing.Optional[str] = None
+    order: typing.Optional[int] = None
 
 @strawberryA.type
 class QuestionValueResultGQLModel:
-    id: strawberryA.ID = None
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
     msg: str = None
 
     @strawberryA.field(description="""Result of question operation""")

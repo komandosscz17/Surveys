@@ -27,43 +27,8 @@ dbmodels = {
     "answers": AnswerModel
     
 }
-async def createLoaders_3(asyncSessionMaker):
-    class Loaders:
-        @property
-        @cache
-        def surveys(self):
-            return createIdLoader(asyncSessionMaker, SurveyModel)
 
-        @property
-        @cache
-        def surveytypes(self):
-            return createIdLoader(asyncSessionMaker, SurveyTypeModel)
-
-        @property
-        @cache
-        def questions(self):
-            return createIdLoader(asyncSessionMaker, QuestionModel)
-
-        @property
-        @cache
-        def questiontypes(self):
-            return createIdLoader(asyncSessionMaker, QuestionTypeModel)
-
-        @property
-        @cache
-        def questionvalues(self):
-            return createIdLoader(asyncSessionMaker, QuestionValueModel)
-
-        @property
-        @cache
-        def answers(self):
-            return createIdLoader(asyncSessionMaker, AnswerModel)
-
-    
-    return Loaders()
-
-from uoishelpers.dataloaders import createIdLoader, createFkeyLoader
-
+from uoishelpers.dataloaders import createIdLoader
 
 
 async def createLoaders(asyncSessionMaker, models=dbmodels):

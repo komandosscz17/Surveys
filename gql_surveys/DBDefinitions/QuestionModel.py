@@ -24,7 +24,7 @@ class QuestionModel(BaseModel):
     name = Column(String)  # kompletní znění otázky
     name_en = Column(String)
     order = Column(Integer)
-    survey_id = Column(ForeignKey("surveys.id"), index=True)
+    survey_id = UUIDFKey()#Column(ForeignKey("surveys.id"), index=True)
     type_id = Column(ForeignKey("surveyquestiontypes.id"), index=True)
 
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now())

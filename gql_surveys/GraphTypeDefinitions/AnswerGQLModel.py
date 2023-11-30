@@ -2,19 +2,20 @@ from typing import List, Union
 import typing
 import strawberry as strawberryA
 from .extra import getLoaders, AsyncSessionFromInfo
-
-
+import uuid
+from .BaseGQLModel import BaseGQLModel
 import datetime
 from contextlib import asynccontextmanager
+
 from .GraphResolvers import (
-    resolveSurveyById,
-    resolveQuestionById,
-    resolveAnswerById,
-    resolveQuestionTypeById,
-    resolveAnswersForQuestion,
-    resolveAnswersForUser,
-    resolveQuestionForSurvey,
-)   
+  
+    resolve_id,
+    resolve_lastchange,
+    resolve_name,
+    resolve_name_en
+    
+  
+)  
 from typing import Annotated
 
 @asynccontextmanager
@@ -30,26 +31,18 @@ QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLM
 @strawberryA.federation.type(
     keys=["id"], description="""Entity representing an access to information"""
 )
-class AnswerGQLModel:
+class AnswerGQLModel(BaseGQLModel):
     @classmethod
     def getLoader(cls, info):
         return getLoaders(info).answers
-    @classmethod
-    async def resolve_reference(cls, info: strawberryA.types.Info, id: strawberryA.ID):
-        loader = getLoaders(info).answers
-        result = await loader.load(id)
-        if result is not None:
-            result._type_definition = cls._type_definition
-        return result
-
-    @strawberryA.field(description="""primary key""")
-    def id(self) -> strawberryA.ID:
-        return self.id
-
-    @strawberryA.field(description="""Timestamp""")
-    def lastchange(self) -> datetime.datetime:
-        return self.lastchange
-
+           
+    
+  
+    id = resolve_id
+    name = resolve_name
+    lastchange = resolve_lastchange
+    name_en = resolve_name_en
+    
     @strawberryA.field(description="""answer content / value""")
     def value(self) -> Union[str, None]:
         return self.value
@@ -65,13 +58,16 @@ class AnswerGQLModel:
     @strawberryA.field(
         description="""is the survey still available?"""
     )  # mimo náš kontejner
+    
     async def user(self) -> UserGQLModel:
+        from .UserGQLModel import UserGQLModel
         return await UserGQLModel.resolve_reference(self.user_id)
 
     @strawberryA.field(
         description="""is the survey still available?"""
     )  # v našem kontejneru
     async def question(self, info: strawberryA.types.Info) -> QuestionGQLModel:
+        from .QuestionGQLModel import QuestionGQLModel
         return await QuestionGQLModel.resolve_reference(info, self.question_id)
 #############################################################
 #
@@ -80,15 +76,15 @@ class AnswerGQLModel:
 #############################################################
 @strawberryA.field(description="""Answer by id""")
 async def answer_by_id(
-        self, info: strawberryA.types.Info, id: strawberryA.ID
+        self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[AnswerGQLModel, None]:
         print(id, flush=True)
-        return await AnswerGQLModel.resolve_reference(info, id)
+        return await AnswerGQLModel.resolve_reference(info=info ,id=str(id))
     
 
 @strawberryA.field(description="""Answer by user""")
 async def answers_by_user(
-        self, info: strawberryA.types.Info, user_id: strawberryA.ID
+        self, info: strawberryA.types.Info, user_id: uuid.UUID
     ) -> Union[AnswerGQLModel, None]:
         loader = getLoaders(info).answers
         result = await loader.filter_by(user_id=user_id)
@@ -106,14 +102,14 @@ import datetime
 @strawberryA.input
 class AnswerUpdateGQLModel:
     lastchange: datetime.datetime
-    id: strawberryA.ID
-    value: Optional[str] = None
-    aswered: Optional[bool] = None   
-    expired: Optional[bool] = None   
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    value:typing.Optional[str] = None
+    aswered: typing.Optional[bool] = None   
+    expired: typing.Optional[bool] = None   
     
 @strawberryA.type
 class AnswerResultGQLModel:
-    id: strawberryA.ID = None
+    id: uuid.UUID
     msg: str = None
 
     @strawberryA.field(description="""Result of answer operation""")

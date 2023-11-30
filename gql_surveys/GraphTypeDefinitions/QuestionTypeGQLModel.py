@@ -15,13 +15,10 @@ import datetime
 from typing import Annotated
 
 from .GraphResolvers import (
-    resolveSurveyById,
-    resolveQuestionById,
-    resolveAnswerById,
-    resolveQuestionTypeById,
-    resolveAnswersForQuestion,
-    resolveAnswersForUser,
-    resolveQuestionForSurvey,
+    resolve_id,
+    resolve_lastchange,
+    resolve_name,
+    resolve_name_en
 )
 
 @strawberryA.federation.type(
@@ -32,14 +29,11 @@ class QuestionTypeGQLModel(BaseGQLModel):
     @classmethod
     def getLoader(cls, info):
         return getLoaders(info).questiontypes
-
-    @strawberryA.field(description="""primary key""")
-    def id(self) -> strawberryA.ID:
-        return self.id
-
-    @strawberryA.field(description="""Survey name""")
-    def name(self) -> str:
-        return self.name
+    
+    id = resolve_id
+    name = resolve_name
+    lastchange = resolve_lastchange
+    name_en = resolve_name_en
 #############################################################
 #
 # Queries
@@ -47,9 +41,9 @@ class QuestionTypeGQLModel(BaseGQLModel):
 #############################################################
 @strawberryA.field(description="""Question type by id""")
 async def question_type_by_id(
-        self, info: strawberryA.types.Info, id: strawberryA.ID
+        self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[QuestionTypeGQLModel, None]:
-        return await QuestionTypeGQLModel.resolve_reference(info, id)
+        return await QuestionTypeGQLModel.resolve_reference(info=info, id=str(id))
 
 @strawberryA.field(description="""Question type by id""")
 async def question_type_page(

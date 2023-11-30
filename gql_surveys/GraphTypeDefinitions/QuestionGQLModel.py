@@ -10,6 +10,11 @@ from .extra import getLoaders
 
 from .GraphResolvers import (
     resolveAnswersForQuestion,
+     resolve_id,
+    resolve_lastchange,
+    resolve_name,
+    resolve_name_en
+    
 )
 
 def getLoader(info):
@@ -35,18 +40,11 @@ class QuestionGQLModel(BaseGQLModel):
     @classmethod
     def getLoader(cls, info):
         return getLoaders(info).questions
-    @strawberryA.field(description="""primary key""")
-    def id(self) -> strawberryA.ID:
-        return self.id
-
-    @strawberryA.field(description="""time stamp""")
-    def lastchange(self) -> datetime.datetime:
-        return self.lastchange
-
-    @strawberryA.field(description="""Question""")
-    def name(self) -> str:
-        return self.name
-
+    id = resolve_id
+    name = resolve_name
+    lastchange = resolve_lastchange
+    name_en = resolve_name_en
+    
     @strawberryA.field(description="""Order of questions""")
     def order(self) -> int:
         return self.order
@@ -63,6 +61,7 @@ class QuestionGQLModel(BaseGQLModel):
     async def survey(
         self, info: strawberryA.types.Info
     ) -> typing.Union["SurveyGQLModel", None]:
+        from .SurveyGQLModel import SurveyGQLModel
         result = await SurveyGQLModel.resolve_reference(info, self.survey_id)
         return result
 
@@ -70,6 +69,7 @@ class QuestionGQLModel(BaseGQLModel):
     async def type(
         self, info: strawberryA.types.Info
     ) -> typing.Union["QuestionTypeGQLModel", None]:
+        from .QuestionTypeGQLModel import QuestionTypeGQLModel
         result = await QuestionTypeGQLModel.resolve_reference(info, self.type_id)
         return result
 
@@ -88,9 +88,9 @@ class QuestionGQLModel(BaseGQLModel):
 #############################################################
 @strawberryA.field(description="""Question by id""")
 async def question_by_id(
-        self, info: strawberryA.types.Info, id: strawberryA.ID
+        self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[QuestionGQLModel, None]:
-        return await QuestionGQLModel.resolve_reference(info, id)
+        return await QuestionGQLModel.resolve_reference(info = info, id=str(id))
 
 
 #############################################################
@@ -103,25 +103,25 @@ import datetime
 
 @strawberryA.input
 class QuestionInsertGQLModel:
-    name: str
-    survey_id: strawberryA.ID
-    name_en: Optional[str] = ""
-    type_id: Optional[strawberryA.ID] = None
-    order: Optional[int] = 1
-    id: Optional[strawberryA.ID] = None
+    name: typing.Optional[str] = None
+    survey_id: typing.Optional[uuid.UUID] = None
+    name_en: typing.Optional[str] = ""
+    type_id: typing.Optional[uuid.UUID] = None
+    order: typing.Optional[int] = strawberryA.field(description="Position in parent entity", default=None)
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
 
 @strawberryA.input
 class QuestionUpdateGQLModel:
     lastchange: datetime.datetime
-    id: strawberryA.ID
-    name: Optional[str] = None
-    name_en: Optional[str] = None
-    type_id: Optional[strawberryA.ID] = None
-    order: Optional[int] = None
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    name: typing.Optional[str] = None
+    name_en: typing.Optional[str] = None
+    type_id: typing.Optional[uuid.UUID] = None
+    order: typing.Optional[int] = None
 
 @strawberryA.type
 class QuestionResultGQLModel:
-    id: strawberryA.ID = None
+    id: uuid.UUID = None
     msg: str = None
 
     @strawberryA.field(description="""Result of question operation""")

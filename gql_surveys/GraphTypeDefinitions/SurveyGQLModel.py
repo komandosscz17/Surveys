@@ -78,7 +78,7 @@ class SurveyGQLModel(BaseGQLModel):
 async def survey_by_id(
         self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> typing.Optional[SurveyGQLModel]:
-        result = await SurveyGQLModel.resolve_reference(info=info,  id=id)
+        result = await SurveyGQLModel.resolve_reference(info=info,  id=str(id))
         return result
 
 @strawberryA.field(description="""Page of surveys""")
@@ -114,7 +114,7 @@ import datetime
 
 @strawberryA.input
 class SurveyInsertGQLModel:
-    name: str
+    name: typing.Optional[str] = None
     name_en: typing.Optional[str] = ""
     type_id: typing.Optional[uuid.UUID] = None
     id: typing.Optional[uuid.UUID]  = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
@@ -122,14 +122,14 @@ class SurveyInsertGQLModel:
 @strawberryA.input
 class SurveyUpdateGQLModel:
     lastchange: datetime.datetime
-    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    id: typing.Optional[uuid.UUID]  = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
     name: typing.Optional[str] = None
     name_en: typing.Optional[str] = None
     type_id: typing.Optional[uuid.UUID] = None
     
 @strawberryA.type
 class SurveyResultGQLModel:
-    id: uuid.UUID = None
+    id: strawberryA.ID = strawberryA.field(default=None, description="primary key value")
     msg: str = None
 
     @strawberryA.field(description="""Result of survey operation""")
@@ -146,6 +146,7 @@ async def survey_insert(self, info: strawberryA.types.Info, survey: SurveyInsert
 
 @strawberryA.mutation(description="""Updates the survey""")
 async def survey_update(self, info: strawberryA.types.Info, survey: SurveyUpdateGQLModel) -> SurveyResultGQLModel:
+    
         loader = getLoaders(info).surveys
         row = await loader.update(survey)
         result = SurveyResultGQLModel()
