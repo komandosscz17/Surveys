@@ -39,7 +39,6 @@ class AnswerGQLModel(BaseGQLModel):
     
   
     id = resolve_id
-    name = resolve_name
     lastchange = resolve_lastchange
     name_en = resolve_name_en
     
