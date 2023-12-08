@@ -78,7 +78,7 @@ class SurveyGQLModel(BaseGQLModel):
 async def survey_by_id(
         self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> typing.Optional[SurveyGQLModel]:
-        result = await SurveyGQLModel.resolve_reference(info=info,  id=str(id))
+        result = await SurveyGQLModel.resolve_reference(info=info,  id=id)
         return result
 
 @strawberryA.field(description="""Page of surveys""")

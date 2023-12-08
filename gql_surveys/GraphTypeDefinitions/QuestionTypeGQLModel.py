@@ -43,7 +43,7 @@ class QuestionTypeGQLModel(BaseGQLModel):
 async def question_type_by_id(
         self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[QuestionTypeGQLModel, None]:
-        return await QuestionTypeGQLModel.resolve_reference(info=info, id=str(id))
+        return await QuestionTypeGQLModel.resolve_reference(info=info, id=id)
 
 @strawberryA.field(description="""Question type by id""")
 async def question_type_page(

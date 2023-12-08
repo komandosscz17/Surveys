@@ -31,7 +31,7 @@ class UserGQLModel:
     id: strawberryA.ID = strawberryA.federation.field(external=True)
 
     @classmethod
-    async def resolve_reference(cls, id: strawberryA.ID):
+    async def resolve_reference(cls, id: uuid.UUID):
         return UserGQLModel(id=id)
     
     
@@ -47,7 +47,7 @@ class UserGQLModel:
 
     @strawberryA.field(description="""Lisooot""")
     async def assignSurvey(
-        self, info: strawberryA.types.Info, survey_id: strawberryA.ID
+        self, info: strawberryA.types.Info, survey_id: uuid.UUID
     ) -> typing.List["AnswerGQLModel"]:  ###############
         async with withInfo(info) as session:
             result = await resolveAnswersForUser(session, self.id)

@@ -53,5 +53,5 @@ async def survey_type_page(
 async def survey_type_by_id(
         self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[SurveyTypeGQLModel, None]:
-        return await SurveyTypeGQLModel.resolve_reference(info=info, id=str(id))
+        return await SurveyTypeGQLModel.resolve_reference(info=info, id=id)
     

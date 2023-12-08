@@ -90,7 +90,7 @@ class QuestionGQLModel(BaseGQLModel):
 async def question_by_id(
         self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[QuestionGQLModel, None]:
-        return await QuestionGQLModel.resolve_reference(info = info, id=str(id))
+        return await QuestionGQLModel.resolve_reference(info = info, id=id)
 
 
 #############################################################
@@ -131,7 +131,7 @@ class QuestionResultGQLModel:
     
 
 @strawberryA.mutation(description="""Updates question value / possible answer""")
-async def question_value_delete(self, info: strawberryA.types.Info, question_value_id: strawberryA.ID) -> QuestionResultGQLModel:
+async def question_value_delete(self, info: strawberryA.types.Info, question_value_id: uuid.UUID) -> QuestionResultGQLModel:
         loader = getLoaders(info).questionvalues
         row = await loader.load(question_value_id)
         await loader.delete(question_value_id)

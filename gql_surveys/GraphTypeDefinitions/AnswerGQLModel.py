@@ -78,7 +78,7 @@ async def answer_by_id(
         self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[AnswerGQLModel, None]:
         print(id, flush=True)
-        return await AnswerGQLModel.resolve_reference(info=info ,id=str(id))
+        return await AnswerGQLModel.resolve_reference(info=info ,id=id)
     
 
 @strawberryA.field(description="""Answer by user""")
