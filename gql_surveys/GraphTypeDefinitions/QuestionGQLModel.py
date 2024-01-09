@@ -53,9 +53,12 @@ class QuestionGQLModel(BaseGQLModel):
     async def answers(
         self, info: strawberryA.types.Info
     ) -> typing.List["AnswerGQLModel"]:
-        async with withInfo(info) as session:
-            result = await resolveAnswersForQuestion(session, self.id)
-            return result
+        loader = getLoaders(info).answers
+        rows = await loader.filter_by(question_id = self.id)
+        result = list(rows)
+        print (result)
+        return result
+       
 
     @strawberryA.field(description="""Survey which owns this question""")
     async def survey(

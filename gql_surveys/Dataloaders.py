@@ -1,11 +1,6 @@
 from uoishelpers.dataloaders import createIdLoader, createFkeyLoader
 from functools import cache
 from aiodataloader import DataLoader
-import datetime
-import aiohttp
-import asyncio
-import os
-import logging
 from uoishelpers.resolvers import select, update, delete
 
 
@@ -43,4 +38,7 @@ async def createLoaders(asyncSessionMaker, models=dbmodels):
     Loaders = type('Loaders', (), attrs)   
     return Loaders()
 
-from functools import cache
+def createLoadersContext(asyncSessionMaker):
+    return {
+        "loaders": createLoaders(asyncSessionMaker)
+    }

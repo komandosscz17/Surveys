@@ -56,9 +56,12 @@ class SurveyGQLModel(BaseGQLModel):
     async def questions(
         self, info: strawberryA.types.Info
     ) -> typing.List["QuestionGQLModel"]:
-        async with withInfo(info) as session:
-            result = await resolveQuestionForSurvey(session, self.id)
-            return result
+        loader = getLoaders(info).questions
+        rows = await loader.filter_by(survey_id = self.id)
+        result = list(rows)
+        print (result)
+        return result
+       
 
 
 #     @strawberryA.field(description="""List""")
