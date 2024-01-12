@@ -120,7 +120,7 @@ class AnswerResultGQLModel:
 async def answer_update(self, info: strawberryA.types.Info, answer: AnswerUpdateGQLModel) -> AnswerResultGQLModel:
         loader = getLoaders(info).answers
         row = await loader.update(answer)
-        result = AnswerResultGQLModel()
+        result = AnswerResultGQLModel(id=answer.id)
         result.msg = "ok"
         result.id = answer.id
         if row is None:
