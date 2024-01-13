@@ -5,23 +5,31 @@ from .BaseGQLModel import BaseGQLModel
 from contextlib import asynccontextmanager
 import datetime
 from typing import Annotated
-from .extra import getLoaders
+from gql_surveys.Dataloaders import getLoaders
 import uuid
 
 from .GraphResolvers import (
     resolve_id,
-    resolve_lastchange,
     resolve_name,
-    resolve_name_en
+    resolve_name_en,
+    resolve_authorization_id,
+    resolve_user_id,
+    resolve_accesslevel,
+    resolve_created,
+    resolve_lastchange,
+    resolve_createdby,
+    resolve_changedby,
+    createRootResolver_by_id,
+    createRootResolver_by_page,
 )
-@asynccontextmanager
-async def withInfo(info):
-    asyncSessionMaker = info.context["asyncSessionMaker"]
-    async with asyncSessionMaker() as session:
-        try:
-            yield session
-        finally:
-            pass
+# @asynccontextmanager
+# async def withInfo(info):
+#     asyncSessionMaker = info.context["asyncSessionMaker"]
+#     async with asyncSessionMaker() as session:
+#         try:
+#             yield session
+#         finally:
+#             pass
         
 QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLModel")]
 @strawberryA.federation.type(
@@ -33,7 +41,10 @@ class QuestionValueGQLModel(BaseGQLModel):
         return getLoaders(info).questionvalues
     id = resolve_id
     name = resolve_name
+    changedby = resolve_changedby
     lastchange = resolve_lastchange
+    created = resolve_created
+    createdby = resolve_createdby
     name_en = resolve_name_en
     
 

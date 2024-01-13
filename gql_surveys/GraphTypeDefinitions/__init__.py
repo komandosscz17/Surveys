@@ -4,17 +4,20 @@ import datetime
 import uuid
 from contextlib import asynccontextmanager
 from .GraphResolvers import (
-    resolveSurveyById,
-    resolveQuestionById,
-    resolveAnswerById,
-    resolveQuestionTypeById,
-    resolveAnswersForQuestion,
-    resolveAnswersForUser,
-    resolveQuestionForSurvey,
+    resolve_id,
+    resolve_authorization_id,
+    resolve_user_id,
+    resolve_accesslevel,
+    resolve_created,
+    resolve_lastchange,
+    resolve_createdby,
+    resolve_changedby,
+    createRootResolver_by_id,
+    createRootResolver_by_page,
 )   
 
 
-from .extra import getLoaders, AsyncSessionFromInfo
+from gql_surveys.Dataloaders import getLoaders
 
 @asynccontextmanager
 async def withInfo(info):
@@ -55,12 +58,11 @@ class Query:
     from .SurveyGQLModel import (
         survey_by_id,
         survey_page,
-        load_survey
+        
     )
 
     survey_by_id = survey_by_id
     survey_page = survey_page
-    load_survey = load_survey
     
     from .QuestionGQLModel import (
         question_by_id

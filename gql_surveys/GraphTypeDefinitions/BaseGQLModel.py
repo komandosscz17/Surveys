@@ -1,6 +1,5 @@
 import strawberry as strawberryA
 import uuid
-import datetime
 
 class BaseGQLModel:
     @classmethod
@@ -9,6 +8,8 @@ class BaseGQLModel:
 
     @classmethod
     async def resolve_reference(cls, info: strawberryA.types.Info, id: uuid.UUID):
+        if id is None:
+            return None
         loader = cls.getLoader(info)
         if isinstance(id, str): id = uuid.UUID(id)
         result = await loader.load(id)

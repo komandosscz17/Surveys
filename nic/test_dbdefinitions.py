@@ -14,7 +14,7 @@ import pytest
 from gql_surveys.DBDefinitions import BaseModel
 from gql_surveys.DBDefinitions import AnswerModel, SurveyModel, SurveyTypeModel, QuestionModel, QuestionTypeModel, QuestionValueModel
 
-from tests._deprecated.shared import prepare_demodata, prepare_in_memory_sqllite, get_demodata
+from tests.shared import prepare_demodata, prepare_in_memory_sqllite, get_demodata
 
 
 @pytest.mark.asyncio

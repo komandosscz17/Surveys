@@ -1,6 +1,6 @@
 import logging
 import json
-from tests._deprecated.introspection import query
+from tests.introspection import query
 
 def create_gql_client():
 

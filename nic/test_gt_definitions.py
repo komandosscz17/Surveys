@@ -11,7 +11,7 @@ import pytest
 
 from gql_surveys.GraphTypeDefinitions import schema
 
-from tests._deprecated.shared import (
+from tests.shared import (
     prepare_demodata,
     prepare_in_memory_sqllite,
     get_demodata,

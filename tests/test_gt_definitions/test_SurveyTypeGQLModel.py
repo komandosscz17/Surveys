@@ -8,7 +8,7 @@ from .gt_utils import (
     create_update_query
 )
 
-test_reference_surveytyepes =  createResolveReferenceTest(table_name='surveytypes', gqltype='SurveyTypeGQLModel', attributeNames=["id", "name", "lastchange"])
+test_reference_surveytyepes =  createResolveReferenceTest(table_name='surveytypes', gqltype='SurveyTypeGQLModel', attributeNames=["id", "name"])
 
 test_query_survey_type_by_id = createByIdTest(table_name="surveytypes", queryEndpoint="surveyTypeById")
 test_query_survey_type_page = createPageTest(table_name="surveytypes", queryEndpoint="surveyTypePage")

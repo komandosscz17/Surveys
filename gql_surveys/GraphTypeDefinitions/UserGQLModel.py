@@ -7,13 +7,19 @@ import datetime
 from typing import Annotated
 from .BaseGQLModel import BaseGQLModel
 from .GraphResolvers import (
-    resolveSurveyById,
-    resolveQuestionById,
-    resolveAnswerById,
-    resolveQuestionTypeById,
-    resolveAnswersForQuestion,
     resolveAnswersForUser,
-    resolveQuestionForSurvey,
+    resolve_id,
+    resolve_name,
+    resolve_name_en,
+    resolve_authorization_id,
+    resolve_user_id,
+    resolve_accesslevel,
+    resolve_created,
+    resolve_lastchange,
+    resolve_createdby,
+    resolve_changedby,
+    createRootResolver_by_id,
+    createRootResolver_by_page,
 )
 @asynccontextmanager
 async def withInfo(info):
@@ -29,7 +35,6 @@ AnswerGQLModel = Annotated["AnswerGQLModel", strawberryA.lazy(".AnswerGQLModel")
 @strawberryA.federation.type(extend=True, keys=["id"])
 class UserGQLModel:
     id: strawberryA.ID = strawberryA.federation.field(external=True)
-
     @classmethod
     async def resolve_reference(cls, id: uuid.UUID):
         return UserGQLModel(id=id)

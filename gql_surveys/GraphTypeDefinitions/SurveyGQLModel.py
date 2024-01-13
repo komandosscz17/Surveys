@@ -5,7 +5,7 @@ import uuid
 import datetime
 from contextlib import asynccontextmanager
 from .BaseGQLModel import BaseGQLModel
-from .extra import getLoaders, AsyncSessionFromInfo
+from gql_surveys.Dataloaders import getLoaders
 from typing import List, Union
 import typing
 import strawberry as strawberryA
@@ -15,24 +15,30 @@ import datetime
 from typing import Annotated
 
 from .GraphResolvers import (
-    resolveSurveyById,
-    resolveQuestionForSurvey,
     resolve_id,
-    resolve_lastchange,
     resolve_name,
-    resolve_name_en
+    resolve_name_en,
+    resolve_authorization_id,
+    resolve_user_id,
+    resolve_accesslevel,
+    resolve_created,
+    resolve_lastchange,
+    resolve_createdby,
+    resolve_changedby,
+    createRootResolver_by_id,
+    createRootResolver_by_page,
     
   
 )
 
-@asynccontextmanager
-async def withInfo(info):
-    asyncSessionMaker = info.context["asyncSessionMaker"]
-    async with asyncSessionMaker() as session:
-        try:
-            yield session
-        finally:
-            pass
+# @asynccontextmanager
+# async def withInfo(info):
+#     asyncSessionMaker = info.context["asyncSessionMaker"]
+#     async with asyncSessionMaker() as session:
+#         try:
+#             yield session
+#         finally:
+#             pass
         
 
 
@@ -48,7 +54,10 @@ class SurveyGQLModel(BaseGQLModel):
         
     id = resolve_id
     name = resolve_name
+    changedby = resolve_changedby
     lastchange = resolve_lastchange
+    created = resolve_created
+    createdby = resolve_createdby
     name_en = resolve_name_en
    
 
@@ -95,14 +104,6 @@ async def survey_page(
 from gql_surveys.DBFeeder import randomSurveyData
 
 
-@strawberryA.field(description="""Answer by id""")
-async def load_survey(
-        self, info: strawberryA.types.Info
-    ) -> Union[SurveyGQLModel, None]:
-        async with withInfo(info) as session:
-            surveyID = await randomSurveyData(AsyncSessionFromInfo(info))
-            result = await resolveSurveyById(session, surveyID)
-            return result
         
         
 ###########################################################################################################################

@@ -6,27 +6,34 @@ from typing import Annotated
 import datetime
 from contextlib import asynccontextmanager
 from .BaseGQLModel import BaseGQLModel
-from .extra import getLoaders
+from gql_surveys.Dataloaders import getLoaders
 
 from .GraphResolvers import (
-    resolveAnswersForQuestion,
-     resolve_id,
-    resolve_lastchange,
+    resolve_id,
     resolve_name,
-    resolve_name_en
+    resolve_name_en,
+    resolve_authorization_id,
+    resolve_user_id,
+    resolve_accesslevel,
+    resolve_created,
+    resolve_lastchange,
+    resolve_createdby,
+    resolve_changedby,
+    createRootResolver_by_id,
+    createRootResolver_by_page,
     
 )
 
 def getLoader(info):
         return info.context['all']
-@asynccontextmanager
-async def withInfo(info):
-    asyncSessionMaker = info.context["asyncSessionMaker"]
-    async with asyncSessionMaker() as session:
-        try:
-            yield session
-        finally:
-            pass
+# @asynccontextmanager
+# async def withInfo(info):
+#     asyncSessionMaker = info.context["asyncSessionMaker"]
+#     async with asyncSessionMaker() as session:
+#         try:
+#             yield session
+#         finally:
+#             pass
 
 AnswerGQLModel = Annotated["AnswerGQLModel", strawberryA.lazy(".AnswerGQLModel")]
 SurveyGQLModel = Annotated["SurveyGQLModel", strawberryA.lazy(".SurveyGQLModel")]
@@ -40,9 +47,13 @@ class QuestionGQLModel(BaseGQLModel):
     @classmethod
     def getLoader(cls, info):
         return getLoaders(info).questions
+    
     id = resolve_id
     name = resolve_name
+    changedby = resolve_changedby
     lastchange = resolve_lastchange
+    created = resolve_created
+    createdby = resolve_createdby
     name_en = resolve_name_en
     
     @strawberryA.field(description="""Order of questions""")

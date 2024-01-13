@@ -5,7 +5,7 @@ import uuid
 import datetime
 from contextlib import asynccontextmanager
 from .BaseGQLModel import BaseGQLModel
-from .extra import getLoaders, AsyncSessionFromInfo
+from gql_surveys.Dataloaders import getLoaders
 from typing import List, Union
 import typing
 import strawberry as strawberryA
@@ -16,9 +16,17 @@ from typing import Annotated
 
 from .GraphResolvers import (
     resolve_id,
-    resolve_lastchange,
     resolve_name,
-    resolve_name_en
+    resolve_name_en,
+    resolve_authorization_id,
+    resolve_user_id,
+    resolve_accesslevel,
+    resolve_created,
+    resolve_lastchange,
+    resolve_createdby,
+    resolve_changedby,
+    createRootResolver_by_id,
+    createRootResolver_by_page,
 )
 
 @strawberryA.federation.type(
@@ -32,7 +40,10 @@ class QuestionTypeGQLModel(BaseGQLModel):
     
     id = resolve_id
     name = resolve_name
+    changedby = resolve_changedby
     lastchange = resolve_lastchange
+    created = resolve_created
+    createdby = resolve_createdby
     name_en = resolve_name_en
 #############################################################
 #

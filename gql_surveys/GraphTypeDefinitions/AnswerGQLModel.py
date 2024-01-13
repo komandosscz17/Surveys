@@ -1,7 +1,7 @@
 from typing import List, Union
 import typing
 import strawberry as strawberryA
-from .extra import getLoaders, AsyncSessionFromInfo
+from gql_surveys.Dataloaders import getLoaders
 import uuid
 from .BaseGQLModel import BaseGQLModel
 import datetime
@@ -10,25 +10,29 @@ from contextlib import asynccontextmanager
 from .GraphResolvers import (
   
     resolve_id,
-    resolve_lastchange,
     resolve_name,
     resolve_name_en,
-    resolve_changedby,
+    resolve_authorization_id,
+    resolve_user_id,
+    resolve_accesslevel,
     resolve_created,
+    resolve_lastchange,
     resolve_createdby,
-    
+    resolve_changedby,
+    createRootResolver_by_id,
+    createRootResolver_by_page,
   
 )  
 from typing import Annotated
 
-@asynccontextmanager
-async def withInfo(info):
-    asyncSessionMaker = info.context["asyncSessionMaker"]
-    async with asyncSessionMaker() as session:
-        try:
-            yield session
-        finally:
-            pass
+# @asynccontextmanager
+# async def withInfo(info):
+#     asyncSessionMaker = info.context["asyncSessionMaker"]
+#     async with asyncSessionMaker() as session:
+#         try:
+#             yield session
+#         finally:
+#             pass
 UserGQLModel = Annotated["UserGQLModel", strawberryA.lazy(".UserGQLModel")]
 QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLModel")]
 @strawberryA.federation.type(
@@ -48,7 +52,6 @@ class AnswerGQLModel(BaseGQLModel):
     lastchange = resolve_lastchange
     created = resolve_created
     createdby = resolve_createdby
-    
     
     
     @strawberryA.field(description="""answer content / value""")
