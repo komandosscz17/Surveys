@@ -39,31 +39,67 @@ class Loaders:
 
 from uoishelpers.dataloaders import createIdLoader
 
+def createLoaders(asyncSessionMaker, models=dbmodels) -> Loaders:
+    class Loaders:
 
-async def createLoaders(asyncSessionMaker, models=dbmodels):
-    def createLambda(loaderName, DBModel):
-        return lambda self: createIdLoader(asyncSessionMaker, DBModel)
-    
-    attrs = {}
-    for key, DBModel in models.items():
-        print("creating loader ", key)
-        attrs[key] = property(cache(createLambda(key, DBModel)))
-    
-    Loaders = type('Loaders', (), attrs)   
+        # @property
+        # @cache
+        #  def authorizations(self):
+        #     return AuthorizationLoader()
+
+        @property
+        @cache
+        def answers(self):
+            return createIdLoader(asyncSessionMaker,AnswerModel)
+        
+        @property
+        @cache
+        def questions(self):
+            return createIdLoader(asyncSessionMaker, QuestionModel)
+        
+        @property
+        @cache
+        def questiontypes(self):
+            return createIdLoader(asyncSessionMaker, QuestionTypeModel)
+        
+        @property
+        @cache
+        def questionvalues(self):
+            return createIdLoader(asyncSessionMaker,QuestionValueModel)
+        
+        @property
+        @cache
+        def surveys(self):
+            return createIdLoader(asyncSessionMaker, SurveyModel)
+        
+        @property
+        @cache
+        def surveytypes(self):
+            return createIdLoader(asyncSessionMaker, SurveyTypeModel)
+
+        
     return Loaders()
 
-def createLoadersContext(asyncSessionMaker):
-    return {
-        "loaders": createLoaders(asyncSessionMaker)
-    }
-def getLoaders(info):
-    return info.context['all']
+    
+# async def createLoaders(asyncSessionMaker, models=dbmodels):
+#     def createLambda(loaderName, DBModel):
+#         return lambda self: createIdLoader(asyncSessionMaker, DBModel)
+    
+#     attrs = {}
+#     for key, DBModel in models.items():
+#         print("creating loader ", key)
+#         attrs[key] = property(cache(createLambda(key, DBModel)))
+    
+#     Loaders = type('Loaders', (), attrs)   
+#     return Loaders()
 
-def AsyncSessionFromInfo(info):
-    print(
-        "obsolete function used AsyncSessionFromInfo, use withInfo context manager instead"
-    )
-    return info.context["session"]
+
+def getLoaders(info)-> Loaders:
+    context = info.context
+    loaders = context["loaders"]
+    return loaders
+
+
 
 demouser = {
     "id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",

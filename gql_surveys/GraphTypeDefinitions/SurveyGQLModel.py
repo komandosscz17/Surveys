@@ -50,6 +50,7 @@ QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLM
 class SurveyGQLModel(BaseGQLModel):
     @classmethod
     def getLoader(cls, info):
+        
         return getLoaders(info).surveys
         
     id = resolve_id

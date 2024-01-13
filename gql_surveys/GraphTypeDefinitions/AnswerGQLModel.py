@@ -48,10 +48,10 @@ class AnswerGQLModel(BaseGQLModel):
     id = resolve_id
     lastchange = resolve_lastchange
     name_en = resolve_name_en
-    changedby = resolve_changedby
+    changed_by = resolve_changedby
     lastchange = resolve_lastchange
     created = resolve_created
-    createdby = resolve_createdby
+    created_by = resolve_createdby
     
     
     @strawberryA.field(description="""answer content / value""")
@@ -71,7 +71,7 @@ class AnswerGQLModel(BaseGQLModel):
     )  # mimo náš kontejner
     
     async def user(self) -> UserGQLModel:
-        from UserGQLModel import UserGQLModel
+        from .UserGQLModel import UserGQLModel
         return await UserGQLModel.resolve_reference(self.user_id)
 
     @strawberryA.field(

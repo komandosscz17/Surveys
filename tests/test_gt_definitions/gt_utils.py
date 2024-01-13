@@ -27,7 +27,7 @@ from tests.client import create_client_function
         
 
 def createByIdTest(table_name, queryEndpoint, attributeNames=["id", "name"]):
-    attlist =  "{" + ", ".join(attributeNames) + "}"
+
     @pytest.mark.asyncio
     async def result_test():
         def test_result(response):
@@ -42,32 +42,30 @@ def createByIdTest(table_name, queryEndpoint, attributeNames=["id", "name"]):
             assert response_data is not None
 
             for attribute in attributeNames:
-                assert response_data[attribute] == f'{datarow[attribute]}'
+                assert response_data[attribute] == f'{data_row[attribute]}'
 
-       
-        
         schema_executor = create_schema_function()
         client_executor = create_client_function()
-       
 
         data = get_demodata()
-        datarow = data[table_name][0]
+        data_row = data[table_name][0]
         content = "{" + ", ".join(attributeNames) + "}"
         query = "query($id: UUID!){" f"{queryEndpoint}(id: $id)" f"{content}" "}"
 
+        variable_values = {"id": f'{data_row["id"]}'}
 
-        variable_values = {"id": datarow["id"]}
-        #append(query_name=f"{queryEndpoint}_{table_name}", query=query, variables=variable_values)
+        
         logging.debug(f"query {query} with {variable_values}")
 
         response = await schema_executor(query, variable_values)
         test_result(response)
         response = await client_executor(query, variable_values)
         test_result(response)
-        
+
     return result_test
+
 def createByIdTestAnswer(table_name, queryEndpoint, attributeNames=["id", "value"]):
-    attlist =  "{" + ", ".join(attributeNames) + "}"
+
     @pytest.mark.asyncio
     async def result_test():
         def test_result(response):
@@ -82,37 +80,34 @@ def createByIdTestAnswer(table_name, queryEndpoint, attributeNames=["id", "value
             assert response_data is not None
 
             for attribute in attributeNames:
-                assert response_data[attribute] == f'{datarow[attribute]}'
+                assert response_data[attribute] == f'{data_row[attribute]}'
 
-       
-        
         schema_executor = create_schema_function()
         client_executor = create_client_function()
-       
 
         data = get_demodata()
-        datarow = data[table_name][0]
+        data_row = data[table_name][0]
         content = "{" + ", ".join(attributeNames) + "}"
         query = "query($id: UUID!){" f"{queryEndpoint}(id: $id)" f"{content}" "}"
 
+        variable_values = {"id": f'{data_row["id"]}'}
 
-        variable_values = {"id": datarow["id"]}
-        #append(query_name=f"{queryEndpoint}_{table_name}", query=query, variables=variable_values)
+        
         logging.debug(f"query {query} with {variable_values}")
 
         response = await schema_executor(query, variable_values)
         test_result(response)
         response = await client_executor(query, variable_values)
         test_result(response)
-        
+
     return result_test
 
 
-def createPageTest(table_name, queryEndpoint, attributeNames=["id", "name"]):
-    
+def createPageTest(table_name, queryEndpoint, attributeNames=["id"]):
     @pytest.mark.asyncio
-    async def result_test(response):
-        def test_result(response):
+    async def result_test() -> None:
+        def test_result(response) -> None:
+            print("response", response)
             errors = response.get("errors", None)
             assert errors is None
 
@@ -129,51 +124,21 @@ def createPageTest(table_name, queryEndpoint, attributeNames=["id", "name"]):
 
         schema_executor = create_schema_function()
         client_executor = create_client_function()
-        data = get_demodata()
-        content = "{" + ", ".join(attributeNames) + "}"
-        query = "query{" f"{queryEndpoint}" f"{content}" "}"
 
-        #append(query_name=f"{queryEndpoint}_{table_name}", query=query)
-        
+        data = get_demodata()
+
+        content = "{" + ", ".join(attributeNames) + "}"
+        query = "query{ " f"{queryEndpoint} {content}" "}"
+
+       
+
         response = await schema_executor(query)
         test_result(response)
         response = await client_executor(query)
         test_result(response)
 
     return result_test
-def createPageTestAnswer(table_name, queryEndpoint, attributeNames=["id", "value"]):
-    
-    @pytest.mark.asyncio
-    async def result_test(response):
-        def test_result(response):
-            errors = response.get("errors", None)
-            assert errors is None
-
-            response_data = response.get("data", None)
-            assert response_data is not None
-
-            response_data = response_data.get(queryEndpoint, None)
-            assert response_data is not None
-            data_rows = data[table_name]
-
-            for row_a, row_b in zip(response_data, data_rows):
-                for attribute in attributeNames:
-                    assert row_a[attribute] == f'{row_b[attribute]}'
-
-        schema_executor = create_schema_function()
-        client_executor = create_client_function()
-        data = get_demodata()
-        content = "{" + ", ".join(attributeNames) + "}"
-        query = "query{" f"{queryEndpoint}" f"{content}" "}"
-
-        #append(query_name=f"{queryEndpoint}_{table_name}", query=query)
-        
-        response = await schema_executor(query)
-        test_result(response)
-        response = await client_executor(query)
-        test_result(response)
-
-    return result_test
+# 
 
 def createResolveReferenceTest(table_name, gqltype, attributeNames=["id", "name"]):
     @pytest.mark.asyncio

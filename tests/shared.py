@@ -2,6 +2,7 @@ import sqlalchemy
 import sys
 import asyncio
 import logging
+from gql_surveys.Dataloaders import createLoaders
 # setting path
 #sys.path.append("../gql_surveys")
 
@@ -54,6 +55,7 @@ from gql_surveys.Dataloaders import createLoadersContext
 def create_context(async_session_maker, with_user=True):
 
     loaders_context = createLoadersContext(async_session_maker)
+    loaders_context["all"] = createLoaders(async_session_maker)
     user = {
         "id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",
         "name": "John",

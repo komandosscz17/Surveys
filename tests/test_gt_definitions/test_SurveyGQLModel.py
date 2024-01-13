@@ -10,8 +10,8 @@ from .gt_utils import (
 test_reference_surveys = createResolveReferenceTest(
     table_name='surveys', gqltype='SurveyGQLModel', 
     attributeNames=["id", "name",])
-test_query_survey_by_id = createByIdTest(table_name="surveys", queryEndpoint="surveyById", attributeNames=["id"])
-test_query_survey_page = createPageTest(table_name="surveys", queryEndpoint="surveyPage", attributeNames=["id"])
+test_query_survey_by_id = createByIdTest(table_name="surveys", queryEndpoint="surveyById")
+test_query_survey_page = createPageTest(table_name="surveys", queryEndpoint="surveyPage")
 
 
 test_survey_insert = create_frontend_query(query="""
@@ -37,7 +37,7 @@ test_survey_insert = create_frontend_query(query="""
 test_survey_update = create_update_query(
     query="""
         mutation($id: UUID!, $name: String!, $lastchange: DateTime!) {
-            SurveyUpdate(survey: {id: $id, name: $name, lastchange: $lastchange}) {
+            surveyUpdate(survey: {id: $id, name: $name, lastchange: $lastchange}) {
                 id
                 msg
                 survey {

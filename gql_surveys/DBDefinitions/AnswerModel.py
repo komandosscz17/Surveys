@@ -34,5 +34,5 @@ class AnswerModel(BaseModel):
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
     
     lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now())
-    createdby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
-    changedby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
+    created_by = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
+    changed_by = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
