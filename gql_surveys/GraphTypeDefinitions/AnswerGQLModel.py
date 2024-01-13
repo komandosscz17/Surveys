@@ -68,7 +68,7 @@ class AnswerGQLModel(BaseGQLModel):
     )  # mimo náš kontejner
     
     async def user(self) -> UserGQLModel:
-        from .UserGQLModel import UserGQLModel
+        from UserGQLModel import UserGQLModel
         return await UserGQLModel.resolve_reference(self.user_id)
 
     @strawberryA.field(

@@ -48,7 +48,7 @@ def resolve_lastchange(self) -> datetime.datetime:
 async def resolve_changedby(self) -> typing.Optional["UserGQLModel"]:
     return await resolve_user(self.changedby)
 async def resolve_user(user_id):
-    from UserGQLModel import UserGQLModel
+    from .UserGQLModel import UserGQLModel
     result = None if user_id is None else await UserGQLModel.resolve_reference(user_id)
     return result
 @strawberry.field(description="""Time of entity introduction""")
