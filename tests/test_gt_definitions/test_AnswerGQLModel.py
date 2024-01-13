@@ -7,11 +7,12 @@ from .gt_utils import (
     create_frontend_query,
     create_update_query
 )
+
 test_reference_answers = createResolveReferenceTest(
     table_name='surveyanswers', gqltype='AnswerGQLModel', 
-    attributeNames=["id", "value", "aswered",'expired' "user_id",'question_id'  "created {id}", "lastchange", "createdby {id}", "changedby {id}"])
+    attributeNames=["id", "value", "aswered",'expired' , "lastchange", "createdby {id}", "changedby {id}"])
 test_query_answer_by_id = createByIdTest(table_name="surveyanswers", queryEndpoint="answerById")
-#test_query_answer_by_users = createPageTest(table_name="surveyanswers", queryEndpoint="answerByUser")
+test_query_answer_by_users = createPageTest(table_name="surveyanswers", queryEndpoint="answerByUser")
 
 
 test_answer_update = create_update_query(query="""

@@ -109,7 +109,9 @@ def createResolveReferenceTest(table_name, gqltype, attributeNames=["id", "name"
         def test_result(resp):
             print("response", resp)
             errors = resp.get("errors", None)
-            assert errors is None
+            if errors:
+                logging.error(f"GraphQL errors: {errors}")
+                assert False, f"GraphQL errors encountered: {errors}"
 
             response_data = resp.get("data", None)
             assert response_data is not None
@@ -148,8 +150,62 @@ def createResolveReferenceTest(table_name, gqltype, attributeNames=["id", "name"
             response = await schema_executor(query, {**variable_values})
             test_result(response)
         #append(query_name=f"{gqltype}_representation", query=query)
+        
 
     return result_test
+def createResolveReferenceTestAnswer(table_name, gqltype, attributeNames=["id", "value"]):
+    
+    @pytest.mark.asyncio
+    async def result_test():
+        def test_result(resp):
+            print("response", resp)
+            errors = resp.get("errors", None)
+            if errors:
+                logging.error(f"GraphQL errors: {errors}")
+                assert False, f"GraphQL errors encountered: {errors}"
+
+            response_data = resp.get("data", None)
+            assert response_data is not None
+
+            logging.info(f"response_data: {response_data}")
+            response_data = response_data.get("_entities", None)
+            assert response_data is not None
+
+            assert len(response_data) == 1
+            response_data = response_data[0]
+
+            assert response_data["id"] == rowid
+
+        schema_executor = create_schema_function()
+        client_executor = create_client_function()
+        
+        content = "{" + ", ".join(attributeNames) + "}"
+
+        data = get_demodata()
+        table = data[table_name]
+        for row in table:
+            rowid = f"{row['id']}"
+            query = ("query($rep: [_Any!]!)" +
+                     "{" +
+                     "_entities(representations: $rep)" +
+                     "{" +
+                     f"    ...on {gqltype} {content}" +
+                     "}" +
+                     "}"
+                     )
+            variable_values = {"rep": [{"__typename": f"{gqltype}", "id": f"{rowid}"}]}
+            
+            logging.info(f"query representation: {query} with {variable_values}")
+            response = await client_executor(query, {**variable_values})
+            test_result(response)
+            response = await schema_executor(query, {**variable_values})
+            test_result(response)
+        #append(query_name=f"{gqltype}_representation", query=query)
+        
+
+    return result_test
+
+
 
 
 def create_frontend_query(query="{}", variables={}, asserts=[]):

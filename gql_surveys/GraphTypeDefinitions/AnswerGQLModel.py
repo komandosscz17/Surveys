@@ -12,7 +12,10 @@ from .GraphResolvers import (
     resolve_id,
     resolve_lastchange,
     resolve_name,
-    resolve_name_en
+    resolve_name_en,
+    resolve_changedby,
+    resolve_created,
+    resolve_createdby,
     
   
 )  
@@ -41,6 +44,12 @@ class AnswerGQLModel(BaseGQLModel):
     id = resolve_id
     lastchange = resolve_lastchange
     name_en = resolve_name_en
+    changedby = resolve_changedby
+    lastchange = resolve_lastchange
+    created = resolve_created
+    createdby = resolve_createdby
+    
+    
     
     @strawberryA.field(description="""answer content / value""")
     def value(self) -> Union[str, None]:
