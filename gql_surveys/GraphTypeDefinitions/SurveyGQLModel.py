@@ -122,8 +122,7 @@ class SurveyInsertGQLModel:
     name: typing.Optional[str] = None
     name_en: typing.Optional[str] = ""
     type_id: typing.Optional[uuid.UUID] = None
-    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
 @strawberryA.input
 class SurveyUpdateGQLModel:
     lastchange: datetime.datetime

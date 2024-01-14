@@ -113,6 +113,17 @@ class AnswerUpdateGQLModel:
     aswered: typing.Optional[bool] = None   
     expired: typing.Optional[bool] = None   
     
+
+@strawberryA.input
+class AnswerInsertGQLModel:
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    value:typing.Optional[str] = None
+    aswered: typing.Optional[bool] = None   
+    expired: typing.Optional[bool] = None   
+    question_id: uuid.UUID = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    user_id: uuid.UUID = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+  
+    
 @strawberryA.type
 class AnswerResultGQLModel:
     id: uuid.UUID
@@ -132,4 +143,12 @@ async def answer_update(self, info: strawberryA.types.Info, answer: AnswerUpdate
         result.id = answer.id
         if row is None:
             result.msg = "fail"           
+        return result
+
+    
+@strawberryA.mutation(description="""Allows update a question.""")
+async def answer_insert(self, info: strawberryA.types.Info, answer: AnswerInsertGQLModel) -> AnswerResultGQLModel:
+        loader = getLoaders(info).answers
+        row = await loader.insert(answer)
+        result = AnswerResultGQLModel(id=row.id, msg="ok")
         return result

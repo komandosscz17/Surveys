@@ -108,10 +108,13 @@ class Mutation:
     survey_assing_to = survey_assing_to
 
     from .AnswerGQLModel import (
-    answer_update
+    answer_update,
+    answer_insert
     )
     answer_update = answer_update
+    answer_insert = answer_insert
 
+    
     from .QuestionGQLModel import (
     question_insert,
     question_update,
