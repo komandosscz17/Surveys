@@ -101,7 +101,7 @@ def createByIdTestAnswer(table_name, queryEndpoint, attributeNames=["id", "value
         test_result(response)
 
     return result_test
-def createByIdTestAnswer2(table_name, queryEndpoint, attributeNames=["id", "userId {id}"]):
+def createByIdTestAnswer2(table_name, queryEndpoint, attributeNames=["userId {id} "]):
 
     @pytest.mark.asyncio
     async def result_test():
@@ -125,7 +125,7 @@ def createByIdTestAnswer2(table_name, queryEndpoint, attributeNames=["id", "user
         data = get_demodata()
         data_row = data[table_name][0]
         content = "{" + ", ".join(attributeNames) + "}"
-        query = "query($id: UUID!){" f"{queryEndpoint}(id: $id)" f"{content}" "}"
+        query = "query($userId: UUID!){" f"{queryEndpoint}(userId: $userId)" f"{content}" "}"
 
         variable_values = {"id": f'{data_row["id"]}'}
 

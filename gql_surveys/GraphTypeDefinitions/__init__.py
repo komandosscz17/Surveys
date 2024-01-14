@@ -79,10 +79,10 @@ class Query:
 
     from .AnswerGQLModel import(
         answer_by_id,
-        answers_by_user
+        
     )
     answer_by_id = answer_by_id
-    answers_by_user = answers_by_user
+    
 
 
 

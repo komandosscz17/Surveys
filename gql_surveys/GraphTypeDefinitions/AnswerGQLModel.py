@@ -88,14 +88,6 @@ async def answer_by_id(
         return await AnswerGQLModel.resolve_reference(info=info ,id=id)
     
 
-@strawberryA.field(description="""Answer by user""")
-async def answers_by_user(
-        self, info: strawberryA.types.Info, user_id: uuid.UUID
-    ) -> Union[AnswerGQLModel, None]:
-        loader = getLoaders(info).answers
-        result = await loader.filter_by(user_id=user_id)
-        return result  
-
 
 #############################################################
 #

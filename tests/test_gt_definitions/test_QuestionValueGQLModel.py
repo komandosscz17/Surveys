@@ -51,23 +51,20 @@ test_questionvalue_update = create_update_query(
     variables={"id": "5dee5260-7cd9-4433-b735-679871153205", "name": "new name"},
     table_name="surveyquestionvalues"
 )
-# dodelat delete
-# test_questionvalue_delete = create_delete_query(
-#     query="""
-#         mutation($id: UUID!) {
-#             questionValueDelete(questionvalue: {id: $id}) {
-#                 id
-#                 msg
-#                 question {
-#                     id
-#                     name
-#                 }
-#             }
-#         }
-#     """,
-#     variables={"id": "5dee5260-7cd9-4433-b735-679871153205"},
-#     table_name="surveyquestionvalues"
-# )
+
+test_questionvalue_delete = create_delete_query(
+    query="""
+        mutation($id: UUID!) {
+            questionValueDelete(questionvalue: {id: $id}) {
+                id
+                msg
+                
+            }
+        }
+    """,
+    variables={"id": "5dee5260-7cd9-4433-b735-679871153205"},
+    table_name="surveyquestionvalues"
+)
 
 
 

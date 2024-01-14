@@ -103,6 +103,10 @@ class QuestionValueResultGQLModel:
     async def question(self, info: strawberryA.types.Info) -> Union[QuestionValueGQLModel, None]:
         result = await QuestionValueGQLModel.resolve_reference(info, self.id)
         return result
+@strawberryA.type
+class QuestionValueDeleteResultGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    msg: str = None 
 
 @strawberryA.mutation(description="""Creates new question value for closed question""")
 async def question_value_insert(self, info: strawberryA.types.Info, question_value: QuestionValueInsertGQLModel) -> QuestionValueResultGQLModel:
@@ -133,13 +137,13 @@ async def question_value_update(self, info: strawberryA.types.Info, question_val
 @strawberryA.mutation(description="Delete the authorization user")
 async def question_value_delete(
         self, info: strawberryA.types.Info, questionvalue: QuestionValueDeleteGQLModel
-) -> QuestionValueResultGQLModel:
+) -> QuestionValueDeleteResultGQLModel:
     questionvalueId = questionvalue.id
     loader = getLoaders(info).questionvalues
     row = await loader.delete(questionvalueId)
     if not row:
-        return QuestionValueResultGQLModel(id= questionvalueId, msg="fail, user not found")
-    result = QuestionValueResultGQLModel(id=questionvalueId, msg="ok")
+        return QuestionValueDeleteResultGQLModel(id= questionvalueId, msg="fail, user not found")
+    result = QuestionValueDeleteResultGQLModel(id=questionvalueId, msg="ok")
     return result
 
 
