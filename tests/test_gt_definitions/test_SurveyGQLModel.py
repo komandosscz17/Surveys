@@ -23,7 +23,10 @@ test_survey_insert = create_frontend_query(query="""
                 id
                 name
                 lastchange
-                              
+              questions  {
+                  id
+              }
+                            
             }
         }
     }

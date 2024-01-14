@@ -41,8 +41,6 @@ class UserGQLModel(BaseGQLModel):
         return UserGQLModel(id=id)
     
     
-
-  
     @strawberryA.field(description="List of answers for the user")
     async def answers(
         self, info: strawberryA.types.Info
