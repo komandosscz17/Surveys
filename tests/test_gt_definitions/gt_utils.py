@@ -101,7 +101,7 @@ def createByIdTestAnswer(table_name, queryEndpoint, attributeNames=["id", "value
         test_result(response)
 
     return result_test
-def createByIdTestAnswer2(table_name, queryEndpoint, attributeNames=["id", "userId"]):
+def createByIdTestAnswer2(table_name, queryEndpoint, attributeNames=["id", "userId {id}"]):
 
     @pytest.mark.asyncio
     async def result_test():
@@ -125,26 +125,20 @@ def createByIdTestAnswer2(table_name, queryEndpoint, attributeNames=["id", "user
         data = get_demodata()
         data_row = data[table_name][0]
         content = "{" + ", ".join(attributeNames) + "}"
+        query = "query($id: UUID!){" f"{queryEndpoint}(id: $id)" f"{content}" "}"
 
-        # Update the query to use 'userId' instead of 'user_id'
-        query = "query($userId: UUID!){" f"{queryEndpoint}(userId: $userId)" f"{content}" "}"
+        variable_values = {"id": f'{data_row["id"]}'}
 
-        # Update the variable name to 'userId'
-        variable_values = {"userId": f'{data_row["user_id"]}'}
-
+        
         logging.debug(f"query {query} with {variable_values}")
-
-        # Log the constructed query and variable values
-        print(f"Constructed Query: {query}")
-        print(f"Variable Values: {variable_values}")
 
         response = await schema_executor(query, variable_values)
         test_result(response)
-
         response = await client_executor(query, variable_values)
         test_result(response)
-
+        
     return result_test
+        
 
 def createPageTest(table_name, queryEndpoint, attributeNames=["id"]):
     @pytest.mark.asyncio
@@ -413,53 +407,30 @@ def create_delete_query(query="{}", variables={}, table_name=""):
     async def test_delete() -> None:
         logging.debug("test_delete")
         assert variables.get("id", None) is not None, "variables must contain id"
-        variables["id"] = uuid.UUID(f"{variables['id']}")
         assert table_name != "", "missing table name"
 
         async_session_maker = await prepare_in_memory_sqllite()
         await prepare_demodata(async_session_maker)
 
-        print("variables['id']", variables, flush=True)
-        statement = sqlalchemy.text(f"SELECT id FROM {table_name} WHERE id=:id").bindparams(id=variables["id"])
-        print("statement", statement, flush=True)
-        async with async_session_maker() as session:
-            rows = await session.execute(statement)
-            row = rows.first()
-
-            print("row", row)
-            id = row[0]
-
-            print(f"id {id}")
-
-        variables["id"] = f'{variables["id"]}'
         context_value = create_context(async_session_maker)
         logging.debug(f"query {query} with {variables}")
         print(f"query {query} with {variables}")
 
+        # Perform the delete operation
         response = await schema.execute(
             query=query,
             variable_values=variables,
             context_value=context_value
         )
 
-        assert response.errors is None
-        response_data = response.data
-        assert response_data is not None
-        print(f"response_data: {response_data}")
-        keys = list(response_data.keys())
-        assert len(keys) == 1, "expected delete test has one result"
-        key = keys[0]
-        result = response_data.get(key, None)
-        assert result is not None, f"{key} is None (test delete) with {query}"
-        entity = None
-        for key, value in result.items():
-            print(f"key {key} value {value}, {type(value)}")
-            if isinstance(value, dict):
-                entity = value
-                break
-        assert entity is not None, f"expected entity in response to {query}"
-        assert entity.get("question") is not None, f"expected non-None 'question' field in response to {query}"
-        assert "id" in entity, "id should be present in the response"
-        assert entity["id"] == variables["id"], f"test delete failed {entity['id']} != {variables['id']}"
+        # Check for errors in the response
+        assert response.errors is None, response.errors[0]
+
+        # Verify the deletion
+        async with async_session_maker() as session:
+            result = await session.execute(sqlalchemy.text(f"SELECT * FROM {table_name} WHERE id=:id"), {'id': variables['id']})
+            assert result.fetchone() is None, "Record not deleted"
+
+        
 
     return test_delete
