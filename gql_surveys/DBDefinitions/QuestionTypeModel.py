@@ -23,7 +23,7 @@ class QuestionTypeModel(BaseModel):
     __tablename__ = "surveyquestiontypes"
     id = UUIDColumn()
     name = Column(String)
-
+    name_en = Column(String, comment= "Koment")
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
     lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now())
     createdby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)

@@ -24,8 +24,7 @@ from .GraphResolvers import (
     
 )
 
-def getLoader(info):
-        return info.context['all']
+
 # @asynccontextmanager
 # async def withInfo(info):
 #     asyncSessionMaker = info.context["asyncSessionMaker"]
@@ -91,8 +90,7 @@ class QuestionGQLModel(BaseGQLModel):
     async def values(
         self, info: strawberryA.types.Info
     ) -> typing.List["QuestionValueGQLModel"]:
-         
-        loader = getLoader(info).questionvalues
+        loader = getLoaders(info).questionvalues
         result = await loader.filter_by(question_id=self.id)
         return result
 #############################################################
@@ -144,17 +142,17 @@ class QuestionResultGQLModel:
         return result
     
 
-@strawberryA.mutation(description="""Updates question value / possible answer""")
-async def question_value_delete(self, info: strawberryA.types.Info, question_value_id: uuid.UUID) -> QuestionResultGQLModel:
-        loader = getLoaders(info).questionvalues
-        row = await loader.load(question_value_id)
-        await loader.delete(question_value_id)
-        result = QuestionResultGQLModel()
-        result.msg = "ok"
-        result.id = row.id
-        if row is None:
-            result.msg = "fail"           
-        return result
+# @strawberryA.mutation(description="""Updates question value / possible answer""")
+# async def question_value_delete(self, info: strawberryA.types.Info, question_value_id: uuid.UUID) -> QuestionResultGQLModel:
+#         loader = getLoaders(info).questionvalues
+#         row = await loader.load(question_value_id)
+#         await loader.delete(question_value_id)
+#         result = QuestionResultGQLModel()
+#         result.msg = "ok"
+#         result.id = row.id
+#         if row is None:
+#             result.msg = "fail"           
+#         return result
 
 @strawberryA.mutation(description="""Creates new question in the survey""")
 async def question_insert(self, info: strawberryA.types.Info, question: QuestionInsertGQLModel) -> QuestionResultGQLModel:

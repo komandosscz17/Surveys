@@ -10,7 +10,7 @@ from .GraphResolvers import (
     resolveAnswersForUser,
     resolve_id,
     resolve_name,
-    resolve_name_en,
+    resolve_name_en,    
     resolve_authorization_id,
     resolve_user_id,
     resolve_accesslevel,
@@ -32,6 +32,7 @@ async def withInfo(info):
         
 
 AnswerGQLModel = Annotated["AnswerGQLModel", strawberryA.lazy(".AnswerGQLModel")]
+
 @strawberryA.federation.type(extend=True, keys=["id"])
 class UserGQLModel:
     id: strawberryA.ID = strawberryA.federation.field(external=True)
@@ -42,7 +43,7 @@ class UserGQLModel:
     
 
   
-    @strawberryA.field(description="""List""")
+    @strawberryA.field(description="List of answers for the user")
     async def answers(
         self, info: strawberryA.types.Info
     ) -> typing.List["AnswerGQLModel"]:
@@ -50,12 +51,13 @@ class UserGQLModel:
             result = await resolveAnswersForUser(session, self.id)
             return result
 
-    @strawberryA.field(description="""Lisooot""")
+    @strawberryA.field(description="Assign survey to the user")
     async def assignSurvey(
         self, info: strawberryA.types.Info, survey_id: uuid.UUID
-    ) -> typing.List["AnswerGQLModel"]:  ###############
+    ) -> typing.List["AnswerGQLModel"]:
         async with withInfo(info) as session:
-            result = await resolveAnswersForUser(session, self.id)
+            # Implement logic for assigning survey to the user here
+            result = await resolveAnswersForUser(session, self.id, survey_id)
             return result
 #############################################################
 #

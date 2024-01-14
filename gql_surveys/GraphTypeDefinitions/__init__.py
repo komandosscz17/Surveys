@@ -115,19 +115,20 @@ class Mutation:
     from .QuestionGQLModel import (
     question_insert,
     question_update,
-    question_value_delete
+    
     )
     question_insert = question_insert
     question_update = question_update
-    question_value_delete = question_value_delete
+    
 
     from .QuestionValueGQLModel import (
      question_value_insert,
      question_value_update,
+     question_value_delete
     ) 
     question_value_insert = question_value_insert
     question_value_update = question_value_update
-
+    question_value_delete = question_value_delete
 
 
 

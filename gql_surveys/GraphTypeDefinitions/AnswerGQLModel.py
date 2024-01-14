@@ -52,7 +52,7 @@ class AnswerGQLModel(BaseGQLModel):
     lastchange = resolve_lastchange
     created = resolve_created
     created_by = resolve_createdby
-    
+    user_id = resolve_user_id
     
     @strawberryA.field(description="""answer content / value""")
     def value(self) -> Union[str, None]:
@@ -66,21 +66,16 @@ class AnswerGQLModel(BaseGQLModel):
     async def expired(self) -> Union[bool, None]:
         return self.expired
 
-    @strawberryA.field(
-        description="""is the survey still available?"""
-    )  # mimo náš kontejner
     
-    async def user(self) -> UserGQLModel:
-        from .UserGQLModel import UserGQLModel
-        return await UserGQLModel.resolve_reference(self.user_id)
-
     @strawberryA.field(
         description="""is the survey still available?"""
     )  # v našem kontejneru
     async def question(self, info: strawberryA.types.Info) -> QuestionGQLModel:
         from .QuestionGQLModel import QuestionGQLModel
         return await QuestionGQLModel.resolve_reference(info, self.question_id)
+    
 #############################################################
+
 #
 # Queries
 #

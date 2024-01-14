@@ -1,0 +1,6 @@
+Uuid GTdefiniton, DBdefinitons - Tomy (hotovo)
+dataloaders - Tomy (hotovo)
+testy - Tomy (chybí crud operace a delete query)
+crud operace - Tobi (..)
+where - Tobi (..)
+Permissions - Tobi + Tomy (...)

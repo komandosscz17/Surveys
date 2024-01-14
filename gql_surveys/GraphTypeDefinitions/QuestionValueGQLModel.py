@@ -22,14 +22,14 @@ from .GraphResolvers import (
     createRootResolver_by_id,
     createRootResolver_by_page,
 )
-# @asynccontextmanager
-# async def withInfo(info):
-#     asyncSessionMaker = info.context["asyncSessionMaker"]
-#     async with asyncSessionMaker() as session:
-#         try:
-#             yield session
-#         finally:
-#             pass
+@asynccontextmanager
+async def withInfo(info):
+    asyncSessionMaker = info.context["asyncSessionMaker"]
+    async with asyncSessionMaker() as session:
+        try:
+            yield session
+        finally:
+            pass
         
 QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLModel")]
 @strawberryA.federation.type(
@@ -46,6 +46,7 @@ class QuestionValueGQLModel(BaseGQLModel):
     created = resolve_created
     createdby = resolve_createdby
     name_en = resolve_name_en
+    
     
 
     @strawberryA.field(description="""order of value""")
@@ -88,11 +89,15 @@ class QuestionValueUpdateGQLModel:
     name: typing.Optional[str] = None
     name_en: typing.Optional[str] = None
     order: typing.Optional[int] = None
-
+    
+@strawberryA.input(description="Input structure - D operation")
+class QuestionValueDeleteGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    
 @strawberryA.type
 class QuestionValueResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = None
+    msg: str = None 
 
     @strawberryA.field(description="""Result of question operation""")
     async def question(self, info: strawberryA.types.Info) -> Union[QuestionValueGQLModel, None]:
@@ -103,20 +108,38 @@ class QuestionValueResultGQLModel:
 async def question_value_insert(self, info: strawberryA.types.Info, question_value: QuestionValueInsertGQLModel) -> QuestionValueResultGQLModel:
         loader = getLoaders(info).questionvalues
         row = await loader.insert(question_value)
-        result = QuestionValueResultGQLModel()
-        result.msg = "ok"
-        result.id = row.id
+        result = QuestionValueResultGQLModel(id=row.id, msg="ok")
         return result
 
 @strawberryA.mutation(description="""Updates question value / possible answer""")
 async def question_value_update(self, info: strawberryA.types.Info, question_value: QuestionValueUpdateGQLModel) -> QuestionValueResultGQLModel:
-        loader = getLoaders(info).questionvalues
-        row = await loader.update(question_value)
-        result = QuestionValueResultGQLModel()
-        result.msg = "ok"
-        result.id = question_value.id
-        if row is None:
-            result.msg = "fail"           
-        return result
+    loader = getLoaders(info).questionvalues
+    row = await loader.update(question_value)
+    result = QuestionValueResultGQLModel(id=question_value.id, msg="ok")  # <-- Provide 'id' during instance creation
+    if row is None:
+        result.msg = "fail"           
+    return result
+# @strawberryA.mutation(description="""Updates question value / possible answer""")
+# async def question_value_delete(self, info: strawberryA.types.Info, question_value_id: uuid.UUID) -> QuestionValueResultGQLModel:
+#         loader = getLoaders(info).questionvalues
+#         row = await loader.load(question_value_id)
+#         await loader.delete(question_value_id)
+#         result = QuestionValueResultGQLModel()
+#         result.msg = "ok"
+#         result.id = row.id
+#         if row is None:
+#             result.msg = "fail"           
+#         return result
+@strawberryA.mutation(description="Delete the authorization user")
+async def question_value_delete(
+        self, info: strawberryA.types.Info, questionvalue: QuestionValueDeleteGQLModel
+) -> QuestionValueResultGQLModel:
+    questionvalueId = questionvalue.id
+    loader = getLoaders(info).questionvalues
+    row = await loader.delete(questionvalueId)
+    if not row:
+        return QuestionValueResultGQLModel(id= questionvalueId, msg="fail, user not found")
+    result = QuestionValueResultGQLModel(id=questionvalueId, msg="ok")
+    return result
 
 

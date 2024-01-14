@@ -29,7 +29,7 @@ class QuestionValueModel(BaseModel):
     name_en = Column(String)
     order = Column(Integer)
     question_id = Column(ForeignKey("surveyquestions.id"), index=True)
-
+    
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
     lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now())
     createdby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
