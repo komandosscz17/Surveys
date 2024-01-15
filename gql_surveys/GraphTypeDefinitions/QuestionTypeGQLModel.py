@@ -72,9 +72,11 @@ async def question_type_page(
 @strawberryA.input
 class QuestionTypeUpdateGQLModel:
     lastchange: datetime.datetime
-    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
-    name:typing.Optional[str] = None    
-
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    name: typing.Optional[str] = None
+    name_en: typing.Optional[str] = None
+    
+    
 @strawberryA.input
 class QuestionTypeInsertGQLModel:
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)

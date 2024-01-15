@@ -26,7 +26,7 @@ AnswerGQLModel = Annotated["AnswerGQLModel", strawberryA.lazy(".AnswerGQLModel")
 
 @strawberryA.federation.type(extend=True, keys=["id"])
 class UserGQLModel(BaseGQLModel):
-    id: strawberryA.ID = strawberryA.federation.field(external=True)
+    id: uuid.UUID = strawberryA.federation.field(external=True)
     @classmethod
     async def resolve_reference(cls, id: uuid.UUID):
         return UserGQLModel(id=id)

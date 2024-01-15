@@ -74,8 +74,9 @@ async def survey_type_by_id(
 @strawberryA.input
 class SurveyTypeUpdateGQLModel:
     lastchange: datetime.datetime
-    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
-    name:typing.Optional[str] = None    
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    name: typing.Optional[str] = None
+    name_en: typing.Optional[str] = None
 
 @strawberryA.input
 class SurveyTypeInsertGQLModel:
