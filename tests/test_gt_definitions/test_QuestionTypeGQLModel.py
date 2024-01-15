@@ -32,14 +32,16 @@ test_questiontype_insert = create_frontend_query(query="""
 test_questiontyoe_update = create_update_query(
     query="""
         mutation($id: UUID!, $name: String!, $lastchange: DateTime!) {
-            questionTypeUpdate(questionType : {id: $id, name: $name, lastchange: $lastchange}) {
+            questionTypeUpdate(questionType: {id: $id, name: $name, lastchange: $lastchange}) {
                 id
                 msg
-                
+                questionType {
+                    id
+                }
             }
         }
     """,
-    variables={"id": "ad0f53fb-240b-47de-ab1d-871bbde6f973", "name": "new name"},
+    variables={"id": "2a6a1731-1efa-4644-a1d8-5848e4b29ce5", "name": "new name"},
     table_name="surveyquestiontypes"
 )
 

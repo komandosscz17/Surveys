@@ -74,7 +74,7 @@ class QuestionTypeUpdateGQLModel:
     lastchange: datetime.datetime
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
     name: typing.Optional[str] = None
-    name_en: typing.Optional[str] = None
+    
     
     
 @strawberryA.input
@@ -84,20 +84,23 @@ class QuestionTypeInsertGQLModel:
 
 @strawberryA.type
 class QuestionTypeResultGQLModel:
-    id: uuid.UUID
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
     msg: str = None
+    
+    @strawberryA.field(description="subject of operation")
+    async def question_type(self, info: strawberryA.types.Info) -> QuestionTypeGQLModel:
+        return await QuestionTypeGQLModel.resolve_reference(info, self.id)
+    
 
     
-@strawberryA.mutation(description="""Allows update a question.""")
+@strawberryA.mutation(description="""Updates question value / possible answer""")
 async def questionType_update(self, info: strawberryA.types.Info, questionType: QuestionTypeUpdateGQLModel) -> QuestionTypeResultGQLModel:
-        loader = getLoaders(info).questiontypes
-        row = await loader.update(questionType)
-        result = QuestionTypeResultGQLModel(id=questionType.id)
-        result.msg = "ok"
-        result.id = questionType.id
-        if row is None:
-            result.msg = "fail"           
-        return result
+    loader = getLoaders(info).questiontypes
+    row = await loader.update(questionType)
+    result = QuestionTypeResultGQLModel(id=questionType.id, msg="ok")  # <-- Provide 'id' during instance creation
+    if row is None:
+        result.msg = "fail"           
+    return result
 
 @strawberryA.mutation(description="""Allows update a question.""")
 async def questionType_insert(self, info: strawberryA.types.Info, questionType: QuestionTypeInsertGQLModel) -> QuestionTypeResultGQLModel:

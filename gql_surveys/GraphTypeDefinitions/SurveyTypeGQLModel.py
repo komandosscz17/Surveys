@@ -87,6 +87,10 @@ class SurveyTypeInsertGQLModel:
 class SurveyTypeResultGQLModel:
     id: uuid.UUID
     msg: str = None
+    
+    @strawberryA.field(description="subject of operation")
+    async def survey_type(self, info: strawberryA.types.Info) -> SurveyTypeGQLModel:
+        return await SurveyTypeGQLModel.resolve_reference(info, self.id)
 
     
 @strawberryA.mutation(description="""Allows update a question.""")

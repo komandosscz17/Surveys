@@ -122,17 +122,7 @@ async def question_value_update(self, info: strawberryA.types.Info, question_val
     if row is None:
         result.msg = "fail"           
     return result
-# @strawberryA.mutation(description="""Updates question value / possible answer""")
-# async def question_value_delete(self, info: strawberryA.types.Info, question_value_id: uuid.UUID) -> QuestionValueResultGQLModel:
-#         loader = getLoaders(info).questionvalues
-#         row = await loader.load(question_value_id)
-#         await loader.delete(question_value_id)
-#         result = QuestionValueResultGQLModel()
-#         result.msg = "ok"
-#         result.id = row.id
-#         if row is None:
-#             result.msg = "fail"           
-#         return result
+
 @strawberryA.mutation(description="Delete the authorization user")
 async def question_value_delete(
         self, info: strawberryA.types.Info, questionvalue: QuestionValueDeleteGQLModel
