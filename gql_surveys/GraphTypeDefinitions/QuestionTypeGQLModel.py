@@ -63,3 +63,43 @@ async def question_type_page(
         loader = getLoaders(info).questiontypes
         result = await loader.page(skip, limit)
         return result
+
+#############################################################
+#
+# Mutations
+#
+#############################################################
+@strawberryA.input
+class QuestionTypeUpdateGQLModel:
+    lastchange: datetime.datetime
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    name:typing.Optional[str] = None    
+
+@strawberryA.input
+class QuestionTypeInsertGQLModel:
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    name:typing.Optional[str] = None
+
+@strawberryA.type
+class QuestionTypeResultGQLModel:
+    id: uuid.UUID
+    msg: str = None
+
+    
+@strawberryA.mutation(description="""Allows update a question.""")
+async def questionType_update(self, info: strawberryA.types.Info, questionType: QuestionTypeUpdateGQLModel) -> QuestionTypeResultGQLModel:
+        loader = getLoaders(info).questiontypes
+        row = await loader.update(questionType)
+        result = QuestionTypeResultGQLModel(id=questionType.id)
+        result.msg = "ok"
+        result.id = questionType.id
+        if row is None:
+            result.msg = "fail"           
+        return result
+
+@strawberryA.mutation(description="""Allows update a question.""")
+async def questionType_insert(self, info: strawberryA.types.Info, questionType: QuestionTypeInsertGQLModel) -> QuestionTypeResultGQLModel:
+        loader = getLoaders(info).questiontypes
+        row = await loader.insert(questionType)
+        result = QuestionTypeResultGQLModel(id=row.id, msg="ok")
+        return result

@@ -107,6 +107,13 @@ class Mutation:
     survey_update = survey_update
     survey_assing_to = survey_assing_to
 
+    from .SurveyTypeGQLModel import (
+    surveyType_insert,
+    surveyType_update,
+    )
+    surveyType_insert = surveyType_insert
+    surveyType_update = surveyType_update
+
     from .AnswerGQLModel import (
     answer_update,
     answer_insert
@@ -114,11 +121,16 @@ class Mutation:
     answer_update = answer_update
     answer_insert = answer_insert
 
+    from .QuestionTypeGQLModel import (
+    questionType_insert,
+    questionType_update,
+    )
+    questionType_insert = questionType_insert
+    questionType_update = questionType_update
     
     from .QuestionGQLModel import (
     question_insert,
     question_update,
-    
     )
     question_insert = question_insert
     question_update = question_update

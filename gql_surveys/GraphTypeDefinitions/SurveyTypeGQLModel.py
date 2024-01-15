@@ -66,3 +66,42 @@ async def survey_type_by_id(
     ) -> Union[SurveyTypeGQLModel, None]:
         return await SurveyTypeGQLModel.resolve_reference(info=info, id=id)
     
+#############################################################
+#
+# Mutations
+#
+#############################################################
+@strawberryA.input
+class SurveyTypeUpdateGQLModel:
+    lastchange: datetime.datetime
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    name:typing.Optional[str] = None    
+
+@strawberryA.input
+class SurveyTypeInsertGQLModel:
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    name:typing.Optional[str] = None
+    
+@strawberryA.type
+class SurveyTypeResultGQLModel:
+    id: uuid.UUID
+    msg: str = None
+
+    
+@strawberryA.mutation(description="""Allows update a question.""")
+async def surveyType_update(self, info: strawberryA.types.Info, surveytype: SurveyTypeUpdateGQLModel) -> SurveyTypeResultGQLModel:
+        loader = getLoaders(info).surveytypes
+        row = await loader.update(surveytype)
+        result = SurveyTypeResultGQLModel(id=surveytype.id)
+        result.msg = "ok"
+        result.id = surveytype.id
+        if row is None:
+            result.msg = "fail"           
+        return result
+
+@strawberryA.mutation(description="""Allows update a question.""")
+async def surveyType_insert(self, info: strawberryA.types.Info, surveytype: SurveyTypeInsertGQLModel) -> SurveyTypeResultGQLModel:
+        loader = getLoaders(info).surveytypes
+        row = await loader.insert(surveytype)
+        result = SurveyTypeResultGQLModel(id=row.id, msg="ok")
+        return result
