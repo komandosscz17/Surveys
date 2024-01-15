@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 import datetime
 from typing import Annotated
 from .BaseGQLModel import BaseGQLModel
+from gql_surveys.Dataloaders import getLoaders
 from .GraphResolvers import (
     resolveAnswersForUser,
     resolve_id,
@@ -21,16 +22,6 @@ from .GraphResolvers import (
     createRootResolver_by_id,
     createRootResolver_by_page,
 )
-@asynccontextmanager
-async def withInfo(info):
-    asyncSessionMaker = info.context["asyncSessionMaker"]
-    async with asyncSessionMaker() as session:
-        try:
-            yield session
-        finally:
-            pass
-        
-
 AnswerGQLModel = Annotated["AnswerGQLModel", strawberryA.lazy(".AnswerGQLModel")]
 
 @strawberryA.federation.type(extend=True, keys=["id"])
@@ -41,22 +32,33 @@ class UserGQLModel(BaseGQLModel):
         return UserGQLModel(id=id)
     
     
+    
     @strawberryA.field(description="List of answers for the user")
     async def answers(
         self, info: strawberryA.types.Info
     ) -> typing.List["AnswerGQLModel"]:
-        async with withInfo(info) as session:
-            result = await resolveAnswersForUser(session, self.id)
-            return result
+        loader = getLoaders(info).answers
+        rows = await loader.filter_by(user_id = self.id)
+        result = list(rows)
+        print (result)
+        return result
+            # resolveAnswersForUser(session, self.id
+            #                       )  
+            # return result
 
-    @strawberryA.field(description="Assign survey to the user")
-    async def assignSurvey(
-        self, info: strawberryA.types.Info, survey_id: uuid.UUID
-    ) -> typing.List["AnswerGQLModel"]:
-        async with withInfo(info) as session:
-            # Implement logic for assigning survey to the user here
-            result = await resolveAnswersForUser(session, self.id, survey_id)
-            return result
+    # @strawberryA.field(description="Assign survey to the user")
+    # async def assignSurvey(
+    #     self, info: strawberryA.types.Info, survey_id: uuid.UUID
+    # ) -> typing.List["AnswerGQLModel"]:
+    #     loader = getLoaders(info).surveys
+    #     rows = await loader.filter_by(survey_id = self.id)
+    #     result = list(rows)
+    #     print (result)
+    #     return result
+        # async with withInfo(info) as session:
+        #     # Implement logic for assigning survey to the user here
+        #     result = await resolveAnswersForUser(session, self.id, survey_id)
+        #     return result
 #############################################################
 #
 # Queries
