@@ -52,7 +52,6 @@ class QuestionValueGQLModel(BaseGQLModel):
     @strawberryA.field(description="""order of value""")
     def order(self) -> int:
         return self.order
-
     @strawberryA.field(description="""Question which has this possible answer""")
     async def question(self, info: strawberryA.types.Info) -> Union[QuestionGQLModel, None]:
         from .QuestionGQLModel import QuestionGQLModel
