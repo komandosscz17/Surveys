@@ -75,12 +75,11 @@ import datetime
 
 @strawberryA.input
 class QuestionValueInsertGQLModel:
-    question_id: typing.Optional[uuid.UUID] = None
+    question_id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
     name: typing.Optional[str] = None
     name_en: typing.Optional[str] = ""   
     order: typing.Optional[int] = None
-    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
 @strawberryA.input
 class QuestionValueUpdateGQLModel:
     lastchange: datetime.datetime

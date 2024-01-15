@@ -101,7 +101,6 @@ async def survey_page(
         loader = getLoaders(info).surveys
         result = await loader.page(skip, limit)
         return result
-
 from gql_surveys.DBFeeder import randomSurveyData
 
 
