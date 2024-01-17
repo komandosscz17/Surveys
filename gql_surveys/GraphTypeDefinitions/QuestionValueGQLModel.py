@@ -62,6 +62,47 @@ class QuestionValueGQLModel(BaseGQLModel):
 # Queries
 #
 #############################################################
+@strawberryA.field(description="""Finds a questionvalue by its id""")
+async def questioValue_by_id(
+        self, info: strawberryA.types.Info, id: uuid.UUID
+    ) -> typing.Optional[QuestionValueGQLModel]:
+        result = await QuestionValueGQLModel.resolve_reference(info=info,  id=id)
+        return result
+
+# @strawberryA.field(description="""Page of question values""")
+# async def questionValue_page(
+#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
+#     ) -> typing.List[QuestionValueGQLModel]:
+#         loader = getLoaders(info).questionvalues
+#         result = await loader.page(skip, limit)
+#         return result
+
+from dataclasses import dataclass
+from .utils import createInputs
+
+QuestionWhereFilter = Annotated["QuestionWhereFilter", strawberryA.lazy(".QuestionGQLModel")]
+
+@createInputs
+@dataclass
+class QuestionValueWhereFilter:
+    name: str
+    name_en: str
+    id: uuid.UUID
+    created_by: uuid.UUID
+    changed_by: uuid.UUID
+
+    # Using QuestionWhereFilter directly without the Annotated wrapper
+    # surveys: QuestionWhereFilter
+
+@strawberryA.field(description="Allows showing and filtering guestion_value information")
+async def questionValue_page(
+    self, info: strawberryA.types.Info, skip: int = 0, limit: int = 10,
+    where: typing.Optional[QuestionValueWhereFilter] = None
+) -> typing.List[QuestionValueGQLModel]:
+    loader = getLoaders(info).questionvalues
+    wf = None if where is None else strawberryA.asdict(where)
+    result = await loader.page(skip=skip, limit=limit, where=wf)
+    return result
 
 #############################################################
 #
@@ -79,7 +120,7 @@ class QuestionValueInsertGQLModel:
     name: typing.Optional[str] = None
     name_en: typing.Optional[str] = ""   
     order: typing.Optional[int] = None
-    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
 
 @strawberryA.input
 class QuestionValueUpdateGQLModel:

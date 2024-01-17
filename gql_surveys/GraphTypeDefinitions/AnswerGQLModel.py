@@ -47,7 +47,6 @@ class AnswerGQLModel(BaseGQLModel):
   
     id = resolve_id
     lastchange = resolve_lastchange
-    name_en = resolve_name_en
     changed_by = resolve_changedby
     lastchange = resolve_lastchange
     created = resolve_created
@@ -75,7 +74,6 @@ class AnswerGQLModel(BaseGQLModel):
         return await QuestionGQLModel.resolve_reference(info, self.question_id)
     
 #############################################################
-
 #
 # Queries
 #
@@ -87,6 +85,40 @@ async def answer_by_id(
         print(id, flush=True)
         return await AnswerGQLModel.resolve_reference(info=info ,id=id)
     
+# @strawberryA.field(description="""Page of answers""")
+# async def answer_page(
+#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
+#     ) -> typing.List[AnswerGQLModel]:
+#         loader = getLoaders(info).answers
+#         result = await loader.page(skip, limit)
+#         return result
+
+from dataclasses import dataclass
+from .utils import createInputs
+
+@createInputs
+@dataclass
+class AnswerWhereFilter:
+    id: uuid.UUID
+    value: str
+    aswered: bool  #chyba není u mě, ale v pgadminu je psáno aswered
+    expired: bool
+    user_id: uuid.UUID
+    question_id: uuid.UUID
+    createdby: uuid.UUID
+    changedby: uuid.UUID
+    
+@strawberryA.field(description="Retrieves the form type")
+async def answer_page(
+    self, info: strawberryA.types.Info, skip: int = 0, limit: int = 10,
+    where: typing.Optional[AnswerWhereFilter] = None
+) -> typing.List[AnswerGQLModel]:
+    wf = None if where is None else strawberryA.asdict(where)
+    loader = getLoaders(info).answers
+    result = await loader.page(skip, limit, where=wf)
+    return result    
+  
+
 
 
 #############################################################
@@ -112,8 +144,8 @@ class AnswerInsertGQLModel:
     value:typing.Optional[str] = None
     aswered: typing.Optional[bool] = None   
     expired: typing.Optional[bool] = None   
-    question_id: uuid.UUID = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
-    user_id: uuid.UUID = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    question_id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
+    user_id:typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
   
     
 @strawberryA.type

@@ -56,15 +56,40 @@ async def question_type_by_id(
     ) -> Union[QuestionTypeGQLModel, None]:
         return await QuestionTypeGQLModel.resolve_reference(info=info, id=id)
 
-@strawberryA.field(description="""Question type by id""")
-async def question_type_page(
-        self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
-    ) -> List[QuestionTypeGQLModel]:
-        loader = getLoaders(info).questiontypes
-        result = await loader.page(skip, limit)
-        return result
+# @strawberryA.field(description="""Question type by id""")
+# async def question_type_page(
+#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
+#     ) -> List[QuestionTypeGQLModel]:
+#         loader = getLoaders(info).questiontypes
+#         result = await loader.page(skip, limit)
+#         return result
 
-#############################################################
+from dataclasses import dataclass
+from .utils import createInputs
+
+QuestionWhereFilter = Annotated["QuestionWhereFilter", strawberryA.lazy(".QuestionGQLModel")]
+
+@createInputs
+@dataclass
+class QuestionTypeWhereFilter:
+    name: str
+    name_en: str
+    id: uuid.UUID
+    created_by: uuid.UUID
+    changed_by: uuid.UUID
+
+    # surveys: QuestionWhereFilter
+
+@strawberryA.field(description="Allows showing and filtering question_type information")
+async def question_type_page(
+    self, info: strawberryA.types.Info, skip: int = 0, limit: int = 10,
+    where: typing.Optional[QuestionTypeWhereFilter] = None
+) -> typing.List[QuestionTypeGQLModel]:
+    loader = getLoaders(info).questiontypes
+    wf = None if where is None else strawberryA.asdict(where)
+    result = await loader.page(skip=skip, limit=limit, where=wf)
+    return result
+############################################################
 #
 # Mutations
 #

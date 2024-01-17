@@ -52,20 +52,47 @@ class SurveyTypeGQLModel(BaseGQLModel):
 #
 #############################################################
 
-@strawberryA.field(description="""Page of survey types""")
-async def survey_type_page(
-        self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
-    ) -> List[SurveyTypeGQLModel]:
-        loader = getLoaders(info).surveytypes
-        result = await loader.page(skip, limit)
-        return result
+# @strawberryA.field(description="""Page of survey types""")
+# async def survey_type_page(
+#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
+#     ) -> List[SurveyTypeGQLModel]:
+#         loader = getLoaders(info).surveytypes
+#         result = await loader.page(skip, limit)
+#         return result
     
 @strawberryA.field(description="""Finds a survey type by its id""")
 async def survey_type_by_id(
         self, info: strawberryA.types.Info, id: uuid.UUID
     ) -> Union[SurveyTypeGQLModel, None]:
         return await SurveyTypeGQLModel.resolve_reference(info=info, id=id)
-    
+
+from dataclasses import dataclass
+from .utils import createInputs
+
+SurveyWhereFilter = Annotated["SurveyWhereFilter", strawberryA.lazy(".SurveyGQLModel")]
+
+@createInputs
+@dataclass
+class SurveyTypeWhereFilter:
+    name: str
+    name_en: str
+    id: uuid.UUID
+    createdby: uuid.UUID
+    changedby: uuid.UUID
+
+    # Using QuestionWhereFilter directly without the Annotated wrapper
+    # forms: SurveyWhereFilter
+
+@strawberryA.field(description="Allows showing and filtering survey_type information")
+async def survey_type_page(
+    self, info: strawberryA.types.Info, skip: int = 0, limit: int = 10,
+    where: typing.Optional[SurveyTypeWhereFilter] = None
+) -> typing.List[SurveyTypeGQLModel]:
+    loader = getLoaders(info).surveytypes
+    wf = None if where is None else strawberryA.asdict(where)
+    result = await loader.page(skip=skip, limit=limit, where=wf)
+    return result
+
 #############################################################
 #
 # Mutations

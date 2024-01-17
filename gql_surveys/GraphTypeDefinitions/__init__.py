@@ -58,16 +58,16 @@ class Query:
     from .SurveyGQLModel import (
         survey_by_id,
         survey_page,
-        
     )
-
     survey_by_id = survey_by_id
     survey_page = survey_page
     
     from .QuestionGQLModel import (
-        question_by_id
+        question_by_id,
+        question_page
     )
     question_by_id = question_by_id
+    question_page = question_page
     
     from .QuestionTypeGQLModel import (
         question_type_by_id,
@@ -77,11 +77,20 @@ class Query:
     question_type_by_id = question_type_by_id
     question_by_id = question_by_id
 
+    from .QuestionValueGQLModel import (
+        questioValue_by_id,
+        questionValue_page
+    )
+    questioValue_by_id = questioValue_by_id
+    questionValue_page = questionValue_page
+    
     from .AnswerGQLModel import(
         answer_by_id,
+        answer_page
         
     )
     answer_by_id = answer_by_id
+    answer_page = answer_page
     
 
 

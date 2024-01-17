@@ -94,19 +94,42 @@ async def survey_by_id(
         result = await SurveyGQLModel.resolve_reference(info=info,  id=id)
         return result
 
-@strawberryA.field(description="""Page of surveys""")
-async def survey_page(
-        self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
-    ) -> typing.List[SurveyGQLModel]:
-        loader = getLoaders(info).surveys
-        result = await loader.page(skip, limit)
-        return result
+# @strawberryA.field(description="""Page of surveys""")
+# async def survey_page(
+#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
+#     ) -> typing.List[SurveyGQLModel]:
+#         loader = getLoaders(info).surveys
+#         result = await loader.page(skip, limit)
+#         return result
 
 from gql_surveys.DBFeeder import randomSurveyData
 
+from dataclasses import dataclass
+from .utils import createInputs
 
-        
-        
+@createInputs
+@dataclass
+class SurveyWhereFilter:
+    name: str
+    name_en: str
+    type_id: uuid.UUID
+    id: uuid.UUID
+    createdby: uuid.UUID
+
+    # from .SurveyTypeGQLModel import SurveyTypeWhereFilter
+    # type: SurveyTypeWhereFilter
+
+@strawberryA.field(description="Allows showing and filtering survey information")
+async def survey_page(
+    self, info: strawberryA.types.Info, skip: int = 0, limit: int = 10,
+    where: typing.Optional[SurveyWhereFilter] = None
+) -> typing.List[SurveyGQLModel]:
+    wf = None if where is None else strawberryA.asdict(where)
+    loader = getLoaders(info).surveys
+    result = await loader.page(skip, limit, where=wf)
+    return result    
+
+     
 ###########################################################################################################################
 #
 #

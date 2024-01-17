@@ -104,6 +104,43 @@ async def question_by_id(
     ) -> Union[QuestionGQLModel, None]:
         return await QuestionGQLModel.resolve_reference(info = info, id=id)
 
+# @strawberryA.field(description="""Page of questions""")
+# async def question_page(
+#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
+#     ) -> typing.List[QuestionGQLModel]:
+#         loader = getLoaders(info).questions
+#         result = await loader.page(skip, limit)
+#         return result
+
+from dataclasses import dataclass
+from .utils import createInputs
+
+@createInputs
+@dataclass
+class QuestionWhereFilter:
+    name: str
+    name_en: str
+    id: uuid.UUID
+    survey_id: uuid.UUID
+    type_id: uuid.UUID
+    createdby: uuid.UUID
+    order: int
+
+    # from .QuestionTypeGQLModel import QuestionTypeWhereFilter
+    # type: QuestionTypeWhereFilter
+
+@strawberryA.field(description="Allows showing and filtering question information")
+async def question_page(
+    self, info: strawberryA.types.Info, skip: int = 0, limit: int = 10,
+    where: typing.Optional[QuestionWhereFilter] = None
+) -> typing.List[QuestionGQLModel]:
+    wf = None if where is None else strawberryA.asdict(where)
+    loader = getLoaders(info).questions
+    result = await loader.page(skip, limit, where=wf)
+    return result    
+
+
+
 
 #############################################################
 #
@@ -120,8 +157,7 @@ class QuestionInsertGQLModel:
     name_en: typing.Optional[str] = ""
     type_id: typing.Optional[uuid.UUID] = None
     order: typing.Optional[int] = strawberryA.field(description="Position in parent entity", default=None)
-    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-
+    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)   
 @strawberryA.input
 class QuestionUpdateGQLModel:
     lastchange: datetime.datetime
