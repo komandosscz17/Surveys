@@ -61,7 +61,7 @@ class SurveyGQLModel(BaseGQLModel):
     createdby = resolve_createdby
     name_en = resolve_name_en
    
-
+    
     @strawberryA.field(description="""List""")
     async def questions(
         self, info: strawberryA.types.Info

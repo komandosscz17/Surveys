@@ -101,8 +101,9 @@ async def survey_type_page(
 @strawberryA.input
 class SurveyTypeUpdateGQLModel:
     lastchange: datetime.datetime
-    id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
-    name:typing.Optional[str] = None    
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    name: typing.Optional[str] = None
+    name_en: typing.Optional[str] = None
 
 @strawberryA.input
 class SurveyTypeInsertGQLModel:
@@ -113,6 +114,10 @@ class SurveyTypeInsertGQLModel:
 class SurveyTypeResultGQLModel:
     id: uuid.UUID
     msg: str = None
+    
+    @strawberryA.field(description="subject of operation")
+    async def survey_type(self, info: strawberryA.types.Info) -> SurveyTypeGQLModel:
+        return await SurveyTypeGQLModel.resolve_reference(info, self.id)
 
     
 @strawberryA.mutation(description="""Allows update a question.""")
