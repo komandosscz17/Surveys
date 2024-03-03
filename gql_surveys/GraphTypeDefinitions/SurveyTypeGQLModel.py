@@ -100,7 +100,7 @@ class SurveyTypeUpdateGQLModel:
     lastchange: datetime.datetime = strawberryA.field(description="Timestamp of the last change")
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
     name: typing.Optional[str] = strawberryA.field(description="Name of SurveyTypeUpdate")
-    name_en: typing.Optional[str] = strawberryA.field(description="english name of SurveyTypeUpdate")
+    name_en: typing.Optional[str] = None
 
 @strawberryA.input
 class SurveyTypeInsertGQLModel:

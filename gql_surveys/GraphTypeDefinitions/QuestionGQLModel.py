@@ -141,7 +141,7 @@ import datetime
 class QuestionInsertGQLModel:
     name: typing.Optional[str] = strawberryA.field(description="Name of question", default=None)
     survey_id: typing.Optional[uuid.UUID] = strawberryA.field(description="The ID of the associated survey", default=None)
-    name_en: typing.Optional[str] = strawberryA.field(description="The english name of the associated question", default=None)
+    name_en: typing.Optional[str] = None
     type_id: typing.Optional[uuid.UUID] = strawberryA.field(description="The ID of the question type", default=None)
     order: typing.Optional[int] = strawberryA.field(description="Position in parent entity", default=None)
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)   
@@ -150,15 +150,15 @@ class QuestionUpdateGQLModel:
     lastchange: datetime.datetime = strawberryA.field(description="Timestamp of the last change")
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
     name: typing.Optional[str] = strawberryA.field(description="Name of question", default=None)
-    name_en: typing.Optional[str] = strawberryA.field(description="The english name of the associated question", default=None)
+    name_en: typing.Optional[str] = None
     type_id: typing.Optional[uuid.UUID] =  strawberryA.field(description="The ID of the question type", default=None)
     order: typing.Optional[int] = strawberryA.field(description="Position in parent entity", default=None)
     
 
 @strawberryA.type
 class QuestionResultGQLModel:
-    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = strawberryA.field(description="Result of the operation (OK/Fail)", default=None) 
+    id: uuid.UUID = None
+    msg: str = None
 
     @strawberryA.field(description="""Result of question operation""")
     async def question(self, info: strawberryA.types.Info) -> Union[QuestionGQLModel, None]:
