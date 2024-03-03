@@ -12,24 +12,16 @@ from .GraphResolvers import (
     resolve_id,
     resolve_name,
     resolve_name_en,
-    resolve_authorization_id,
     resolve_user_id,
-    resolve_accesslevel,
     resolve_created,
     resolve_lastchange,
     resolve_createdby,
     resolve_changedby,
     createRootResolver_by_id,
-    createRootResolver_by_page,
+    resolve_order
+
 )
-@asynccontextmanager
-async def withInfo(info):
-    asyncSessionMaker = info.context["asyncSessionMaker"]
-    async with asyncSessionMaker() as session:
-        try:
-            yield session
-        finally:
-            pass
+
         
 QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLModel")]
 @strawberryA.federation.type(
@@ -46,17 +38,10 @@ class QuestionValueGQLModel(BaseGQLModel):
     created = resolve_created
     createdby = resolve_createdby
     name_en = resolve_name_en
-    
+    order = resolve_order
     
 
-    @strawberryA.field(description="""order of value""")
-    def order(self) -> int:
-        return self.order
-    @strawberryA.field(description="""Question which has this possible answer""")
-    async def question(self, info: strawberryA.types.Info) -> Union[QuestionGQLModel, None]:
-        from .QuestionGQLModel import QuestionGQLModel
-        result = await QuestionGQLModel.resolve_reference(info, self.question_id)
-        return result
+   
 #############################################################
 #
 # Queries
@@ -68,14 +53,13 @@ async def questioValue_by_id(
     ) -> typing.Optional[QuestionValueGQLModel]:
         result = await QuestionValueGQLModel.resolve_reference(info=info,  id=id)
         return result
+    
+@strawberryA.field(description="""Question which has this possible answer""")
+async def question(self, info: strawberryA.types.Info) -> Union[QuestionGQLModel, None]:
+        from .QuestionGQLModel import QuestionGQLModel
+        result = await QuestionGQLModel.resolve_reference(info, self.question_id)
+        return result
 
-# @strawberryA.field(description="""Page of question values""")
-# async def questionValue_page(
-#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
-#     ) -> typing.List[QuestionValueGQLModel]:
-#         loader = getLoaders(info).questionvalues
-#         result = await loader.page(skip, limit)
-#         return result
 
 from dataclasses import dataclass
 from .utils import createInputs

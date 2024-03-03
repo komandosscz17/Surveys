@@ -101,43 +101,7 @@ def createByIdTestAnswer(table_name, queryEndpoint, attributeNames=["id", "value
         test_result(response)
 
     return result_test
-def createByIdTestAnswer2(table_name, queryEndpoint, attributeNames=["userId {id} "]):
 
-    @pytest.mark.asyncio
-    async def result_test():
-        def test_result(response):
-            print("response", response)
-            errors = response.get("errors", None)
-            assert errors is None
-
-            response_data = response.get("data", None)
-            assert response_data is not None
-
-            response_data = response_data[queryEndpoint]
-            assert response_data is not None
-
-            for attribute in attributeNames:
-                assert response_data[attribute] == f'{data_row[attribute]}'
-
-        schema_executor = create_schema_function()
-        client_executor = create_client_function()
-
-        data = get_demodata()
-        data_row = data[table_name][0]
-        content = "{" + ", ".join(attributeNames) + "}"
-        query = "query($userId: UUID!){" f"{queryEndpoint}(userId: $userId)" f"{content}" "}"
-
-        variable_values = {"id": f'{data_row["id"]}'}
-
-        
-        logging.debug(f"query {query} with {variable_values}")
-
-        response = await schema_executor(query, variable_values)
-        test_result(response)
-        response = await client_executor(query, variable_values)
-        test_result(response)
-        
-    return result_test
         
 
 def createPageTest(table_name, queryEndpoint, attributeNames=["id"]):

@@ -12,15 +12,13 @@ from .GraphResolvers import (
     resolve_id,
     resolve_name,
     resolve_name_en,
-    resolve_authorization_id,
     resolve_user_id,
-    resolve_accesslevel,
     resolve_created,
     resolve_lastchange,
     resolve_createdby,
     resolve_changedby,
     createRootResolver_by_id,
-    createRootResolver_by_page,
+    
   
 )  
 from typing import Annotated
@@ -157,6 +155,28 @@ class AnswerResultGQLModel:
     async def answer(self, info: strawberryA.types.Info) -> Union[AnswerGQLModel, None]:
         result = await AnswerGQLModel.resolve_reference(info, self.id)
         return result
+    
+@strawberryA.input(description="Input structure - D operation")
+class AnswerDeleteGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+
+@strawberryA.type
+class AnswerDeleteResultGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    msg: str = None 
+    
+
+@strawberryA.mutation(description="Deletes the answer")
+async def answer_delete(
+        self, info: strawberryA.types.Info, answer: AnswerDeleteGQLModel
+) -> AnswerDeleteResultGQLModel:
+    answerId = answer.id
+    loader = getLoaders(info).answers
+    row = await loader.delete(answerId)
+    if not row:
+        return AnswerDeleteResultGQLModel(id= answerId, msg="fail")
+    result = AnswerDeleteResultGQLModel(id=answerId, msg="ok")
+    return result      
     
 @strawberryA.mutation(description="""Allows update a question.""")
 async def answer_update(self, info: strawberryA.types.Info, answer: AnswerUpdateGQLModel) -> AnswerResultGQLModel:

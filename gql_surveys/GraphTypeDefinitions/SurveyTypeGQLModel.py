@@ -18,15 +18,13 @@ from .GraphResolvers import (
     resolve_id,
     resolve_name,
     resolve_name_en,
-    resolve_authorization_id,
     resolve_user_id,
-    resolve_accesslevel,
     resolve_created,
     resolve_lastchange,
     resolve_createdby,
     resolve_changedby,
     createRootResolver_by_id,
-    createRootResolver_by_page,
+    
     
 )
         
@@ -119,6 +117,27 @@ class SurveyTypeResultGQLModel:
     async def survey_type(self, info: strawberryA.types.Info) -> SurveyTypeGQLModel:
         return await SurveyTypeGQLModel.resolve_reference(info, self.id)
 
+@strawberryA.input(description="Input structure - D operation")
+class SurveytypeDeleteGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+
+@strawberryA.type
+class SurveytypeDeleteResultGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    msg: str = None 
+    
+
+@strawberryA.mutation(description="Delete the surveytype")
+async def surveytype_delete(
+        self, info: strawberryA.types.Info, surveytype: SurveytypeDeleteGQLModel
+) -> SurveytypeDeleteResultGQLModel:
+    surveytypeId = surveytype.id
+    loader = getLoaders(info).surveytypes
+    row = await loader.delete(surveytypeId)
+    if not row:
+        return SurveytypeDeleteResultGQLModel(id= surveytypeId, msg="fail")
+    result = SurveytypeDeleteResultGQLModel(id=surveytypeId, msg="ok")
+    return result
     
 @strawberryA.mutation(description="""Allows update a question.""")
 async def surveyType_update(self, info: strawberryA.types.Info, surveytype: SurveyTypeUpdateGQLModel) -> SurveyTypeResultGQLModel:

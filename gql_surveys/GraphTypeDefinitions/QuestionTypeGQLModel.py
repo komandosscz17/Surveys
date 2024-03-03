@@ -18,15 +18,13 @@ from .GraphResolvers import (
     resolve_id,
     resolve_name,
     resolve_name_en,
-    resolve_authorization_id,
     resolve_user_id,
-    resolve_accesslevel,
     resolve_created,
     resolve_lastchange,
     resolve_createdby,
     resolve_changedby,
     createRootResolver_by_id,
-    createRootResolver_by_page,
+    
 )
 
 @strawberryA.federation.type(
@@ -111,13 +109,15 @@ class QuestionTypeInsertGQLModel:
 class QuestionTypeResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
     msg: str = None
+
     
     @strawberryA.field(description="subject of operation")
     async def question_type(self, info: strawberryA.types.Info) -> QuestionTypeGQLModel:
         return await QuestionTypeGQLModel.resolve_reference(info, self.id)
     
+        
 
-    
+
 @strawberryA.mutation(description="""Updates question value / possible answer""")
 async def questionType_update(self, info: strawberryA.types.Info, questionType: QuestionTypeUpdateGQLModel) -> QuestionTypeResultGQLModel:
     loader = getLoaders(info).questiontypes

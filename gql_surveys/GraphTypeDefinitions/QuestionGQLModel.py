@@ -12,15 +12,14 @@ from .GraphResolvers import (
     resolve_id,
     resolve_name,
     resolve_name_en,
-    resolve_authorization_id,
     resolve_user_id,
-    resolve_accesslevel,
     resolve_created,
     resolve_lastchange,
     resolve_createdby,
     resolve_changedby,
     createRootResolver_by_id,
-    createRootResolver_by_page,
+    resolve_order,
+    
     
 )
 
@@ -54,19 +53,15 @@ class QuestionGQLModel(BaseGQLModel):
     created = resolve_created
     createdby = resolve_createdby
     name_en = resolve_name_en
-    
-    @strawberryA.field(description="""Order of questions""")
-    def order(self) -> int:
-        return self.order
+    order = resolve_order
+
 
     @strawberryA.field(description="""List of answers related to the user""")
     async def answers(
         self, info: strawberryA.types.Info
-    ) -> typing.List["AnswerGQLModel"]:
+    ) -> List["AnswerGQLModel"]:
         loader = getLoaders(info).answers
-        rows = await loader.filter_by(question_id = self.id)
-        result = list(rows)
-        print (result)
+        result = await loader.filter_by(question_id = self.id)
         return result
        
 
@@ -142,13 +137,15 @@ async def question_page(
 
 
 
-#############################################################
-#
-# Mutations
-#
-#############################################################
+
 from typing import Optional
 import datetime
+
+#############################################################
+#
+# Models
+#
+#############################################################
 
 @strawberryA.input
 class QuestionInsertGQLModel:
@@ -166,6 +163,7 @@ class QuestionUpdateGQLModel:
     name_en: typing.Optional[str] = None
     type_id: typing.Optional[uuid.UUID] = None
     order: typing.Optional[int] = None
+    
 
 @strawberryA.type
 class QuestionResultGQLModel:
@@ -177,18 +175,31 @@ class QuestionResultGQLModel:
         result = await QuestionGQLModel.resolve_reference(info, self.id)
         return result
     
+@strawberryA.input(description="Input structure - D operation")
+class QuestionDeleteGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
 
-# @strawberryA.mutation(description="""Updates question value / possible answer""")
-# async def question_value_delete(self, info: strawberryA.types.Info, question_value_id: uuid.UUID) -> QuestionResultGQLModel:
-#         loader = getLoaders(info).questionvalues
-#         row = await loader.load(question_value_id)
-#         await loader.delete(question_value_id)
-#         result = QuestionResultGQLModel()
-#         result.msg = "ok"
-#         result.id = row.id
-#         if row is None:
-#             result.msg = "fail"           
-#         return result
+@strawberryA.type
+class QuestionDeleteResultGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    msg: str = None 
+    
+#############################################################
+#
+# Mutations
+#
+#############################################################
+@strawberryA.mutation(description="Delete the question")
+async def question_delete(
+        self, info: strawberryA.types.Info, question: QuestionDeleteGQLModel
+) -> QuestionDeleteResultGQLModel:
+    questionId = question.id
+    loader = getLoaders(info).questions
+    row = await loader.delete(questionId)
+    if not row:
+        return QuestionDeleteResultGQLModel(id= questionId, msg="fail, user not found")
+    result = QuestionDeleteResultGQLModel(id=questionId, msg="ok")
+    return result
 
 @strawberryA.mutation(description="""Creates new question in the survey""")
 async def question_insert(self, info: strawberryA.types.Info, question: QuestionInsertGQLModel) -> QuestionResultGQLModel:

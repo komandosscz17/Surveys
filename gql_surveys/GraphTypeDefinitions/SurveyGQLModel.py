@@ -18,15 +18,13 @@ from .GraphResolvers import (
     resolve_id,
     resolve_name,
     resolve_name_en,
-    resolve_authorization_id,
     resolve_user_id,
-    resolve_accesslevel,
     resolve_created,
     resolve_lastchange,
     resolve_createdby,
     resolve_changedby,
     createRootResolver_by_id,
-    createRootResolver_by_page,
+    
     
   
 )
@@ -102,7 +100,7 @@ async def survey_by_id(
 #         result = await loader.page(skip, limit)
 #         return result
 
-from gql_surveys.DBFeeder import randomSurveyData
+
 
 from dataclasses import dataclass
 from .utils import createInputs
@@ -163,6 +161,28 @@ class SurveyResultGQLModel:
     async def survey(self, info: strawberryA.types.Info) -> typing.Optional[SurveyGQLModel]:
         result = await SurveyGQLModel.resolve_reference(info, self.id)
         return result
+    
+@strawberryA.input(description="Input structure - D operation")
+class SurveyDeleteGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+
+@strawberryA.type
+class SurveyDeleteResultGQLModel:
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    msg: str = None 
+    
+
+@strawberryA.mutation(description="Delete the surveytype")
+async def survey_delete(
+        self, info: strawberryA.types.Info, survey: SurveyDeleteGQLModel
+) -> SurveyDeleteResultGQLModel:
+    surveyId = survey.id
+    loader = getLoaders(info).surveys
+    row = await loader.delete(surveyId)
+    if not row:
+        return SurveyDeleteResultGQLModel(id= surveyId, msg="fail")
+    result = SurveyDeleteResultGQLModel(id=surveyId, msg="ok")
+    return result    
     
 @strawberryA.mutation(description="""Creates new survey""")
 async def survey_insert(self, info: strawberryA.types.Info, survey: SurveyInsertGQLModel) -> SurveyResultGQLModel:

@@ -5,7 +5,8 @@ from .gt_utils import (
     createPageTest, 
     createResolveReferenceTest, 
     create_frontend_query,
-    create_update_query
+    create_update_query,
+    create_delete_query
 )
 test_reference_questions = createResolveReferenceTest(
     table_name='surveyquestions', gqltype='QuestionGQLModel', 
@@ -48,6 +49,20 @@ test_question_update = create_update_query(
     """,
     variables={"id": "5b7e4ae7-9bb9-4e2f-829b-c2763ac1092e", "name": "new name"},
     table_name="surveyquestions "
+)
+
+test_questiontype_delete = create_delete_query(
+    query="""
+        mutation($id: UUID!) {
+            questionDelete(question: {id: $id}) {
+                id
+                msg
+                
+            }
+        }
+    """,
+    variables={"id": "5b7e4ae7-9bb9-4e2f-829b-c2763ac1092e"},
+    table_name="surveyquestions"
 )
 
 

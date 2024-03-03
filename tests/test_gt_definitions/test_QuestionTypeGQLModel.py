@@ -5,7 +5,8 @@ from .gt_utils import (
     createPageTest, 
     createResolveReferenceTest, 
     create_frontend_query,
-    create_update_query
+    create_update_query,
+    
 )
 test_reference_questiontypes = createResolveReferenceTest(
     table_name='surveyquestiontypes', gqltype='QuestionTypeGQLModel', 
@@ -44,6 +45,5 @@ test_questiontyoe_update = create_update_query(
     variables={"id": "2a6a1731-1efa-4644-a1d8-5848e4b29ce5", "name": "new name"},
     table_name="surveyquestiontypes"
 )
-
 
 

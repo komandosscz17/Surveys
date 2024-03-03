@@ -5,28 +5,19 @@ import uuid
 from contextlib import asynccontextmanager
 from .GraphResolvers import (
     resolve_id,
-    resolve_authorization_id,
     resolve_user_id,
-    resolve_accesslevel,
     resolve_created,
     resolve_lastchange,
     resolve_createdby,
     resolve_changedby,
     createRootResolver_by_id,
-    createRootResolver_by_page,
+    
 )   
 
 
 from gql_surveys.Dataloaders import getLoaders
 
-@asynccontextmanager
-async def withInfo(info):
-    asyncSessionMaker = info.context["asyncSessionMaker"]
-    async with asyncSessionMaker() as session:
-        try:
-            yield session
-        finally:
-            pass
+
 
 
 from .UserGQLModel import UserGQLModel
@@ -36,7 +27,6 @@ from .QuestionTypeGQLModel import QuestionTypeGQLModel
 from .AnswerGQLModel import AnswerGQLModel
 from .SurveyGQLModel    import SurveyGQLModel
 from .SurveyTypeGQLModel import SurveyTypeGQLModel 
-from gql_surveys.DBFeeder import randomSurveyData
 #############################################################
 #
 # Queries
@@ -45,7 +35,7 @@ from gql_surveys.DBFeeder import randomSurveyData
 
 @strawberryA.type(description="""Type for query root""")
 class Query:
-    
+
 
     from .SurveyTypeGQLModel import(
     survey_type_page,
@@ -110,29 +100,36 @@ class Mutation:
     from .SurveyGQLModel import (
     survey_insert,
     survey_update,
-    survey_assing_to 
+    survey_assing_to ,
+    survey_delete
     )
     survey_insert = survey_insert
     survey_update = survey_update
     survey_assing_to = survey_assing_to
+    survey_delete = survey_delete
 
     from .SurveyTypeGQLModel import (
     surveyType_insert,
     surveyType_update,
+    surveytype_delete,
     )
     surveyType_insert = surveyType_insert
     surveyType_update = surveyType_update
+    surveytype_delete = surveytype_delete
 
     from .AnswerGQLModel import (
     answer_update,
-    answer_insert
+    answer_insert,
+    answer_delete
     )
     answer_update = answer_update
     answer_insert = answer_insert
+    answer_delete = answer_delete
 
     from .QuestionTypeGQLModel import (
     questionType_insert,
     questionType_update,
+    
     )
     questionType_insert = questionType_insert
     questionType_update = questionType_update
@@ -140,9 +137,11 @@ class Mutation:
     from .QuestionGQLModel import (
     question_insert,
     question_update,
+    question_delete,
     )
     question_insert = question_insert
     question_update = question_update
+    question_delete = question_delete
     
 
     from .QuestionValueGQLModel import (
