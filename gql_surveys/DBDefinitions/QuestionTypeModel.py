@@ -22,9 +22,9 @@ from.UUID import (UUIDFKey, UUIDColumn,)
 class QuestionTypeModel(BaseModel):
     __tablename__ = "surveyquestiontypes"
     id = UUIDColumn()
-    name = Column(String)
-    name_en = Column(String, comment= "Koment")
-    created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
-    lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now())
+    name = Column(String, comment="name of the question type")
+    name_en = Column(String, comment="english name of the question type")
+    created = Column(DateTime, server_default=sqlalchemy.sql.func.now(),  comment="Timestamp when the financial information category was created")
+    lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now(), comment="Timestamp of the last change to the financial information category")
     createdby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
     changedby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)

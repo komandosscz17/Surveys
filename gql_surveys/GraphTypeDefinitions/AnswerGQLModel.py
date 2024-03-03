@@ -18,33 +18,25 @@ from .GraphResolvers import (
     resolve_createdby,
     resolve_changedby,
     createRootResolver_by_id,
-    
-  
 )  
+
+
 from typing import Annotated
 
-# @asynccontextmanager
-# async def withInfo(info):
-#     asyncSessionMaker = info.context["asyncSessionMaker"]
-#     async with asyncSessionMaker() as session:
-#         try:
-#             yield session
-#         finally:
-#             pass
 UserGQLModel = Annotated["UserGQLModel", strawberryA.lazy(".UserGQLModel")]
 QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLModel")]
 @strawberryA.federation.type(
     keys=["id"], description="""Entity representing an access to information"""
 )
+
+
 class AnswerGQLModel(BaseGQLModel):
     @classmethod
     def getLoader(cls, info):
         return getLoaders(info).answers
            
-    
-  
     id = resolve_id
-    lastchange = resolve_lastchange
+    lastchange = resolve_lastchange 
     changed_by = resolve_changedby
     lastchange = resolve_lastchange
     created = resolve_created
@@ -83,14 +75,6 @@ async def answer_by_id(
         print(id, flush=True)
         return await AnswerGQLModel.resolve_reference(info=info ,id=id)
     
-# @strawberryA.field(description="""Page of answers""")
-# async def answer_page(
-#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
-#     ) -> typing.List[AnswerGQLModel]:
-#         loader = getLoaders(info).answers
-#         result = await loader.page(skip, limit)
-#         return result
-
 from dataclasses import dataclass
 from .utils import createInputs
 
@@ -116,40 +100,38 @@ async def answer_page(
     result = await loader.page(skip, limit, where=wf)
     return result    
   
-
-
-
 #############################################################
 #
-# Mutations
+# Models
 #
 #############################################################
+
 from typing import Optional
 import datetime
 
 @strawberryA.input
 class AnswerUpdateGQLModel:
-    lastchange: datetime.datetime
+    lastchange: datetime.datetime = strawberryA.field(description="Timestamp of the last change")
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
-    value:typing.Optional[str] = None
-    aswered: typing.Optional[bool] = None   
-    expired: typing.Optional[bool] = None   
+    value:typing.Optional[str] = strawberryA.field(description="Value of answer update", default=None)
+    aswered: typing.Optional[bool] = strawberryA.field(description="If answer is already answered", default=None)  
+    expired: typing.Optional[bool] = strawberryA.field(description="If answer is already expired", default=None)    
     
 
 @strawberryA.input
 class AnswerInsertGQLModel:
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
-    value:typing.Optional[str] = None
-    aswered: typing.Optional[bool] = None   
-    expired: typing.Optional[bool] = None   
+    value:typing.Optional[str] = strawberryA.field(description="Value of answer insert", default=None)
+    aswered: typing.Optional[bool] = strawberryA.field(description="If answer is already answered", default=None)    
+    expired: typing.Optional[bool] = strawberryA.field(description="If answer is already expired", default=None) 
     question_id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
     user_id:typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
   
     
 @strawberryA.type
 class AnswerResultGQLModel:
-    id: uuid.UUID
-    msg: str = None
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    msg: str = strawberryA.field(description="Result of the operation (OK/Fail)", default=None) 
 
     @strawberryA.field(description="""Result of answer operation""")
     async def answer(self, info: strawberryA.types.Info) -> Union[AnswerGQLModel, None]:
@@ -163,7 +145,13 @@ class AnswerDeleteGQLModel:
 @strawberryA.type
 class AnswerDeleteResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = None 
+    msg: str = strawberryA.field(description="Result of the operation (OK/Fail)", default=None) 
+#############################################################
+#
+# Mutations
+#
+#############################################################
+
     
 
 @strawberryA.mutation(description="Deletes the answer")

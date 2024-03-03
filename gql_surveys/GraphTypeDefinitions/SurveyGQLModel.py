@@ -29,16 +29,6 @@ from .GraphResolvers import (
   
 )
 
-# @asynccontextmanager
-# async def withInfo(info):
-#     asyncSessionMaker = info.context["asyncSessionMaker"]
-#     async with asyncSessionMaker() as session:
-#         try:
-#             yield session
-#         finally:
-#             pass
-        
-
 
 QuestionGQLModel = Annotated["QuestionGQLModel", strawberryA.lazy(".QuestionGQLModel")]
 @strawberryA.federation.type(
@@ -71,15 +61,6 @@ class SurveyGQLModel(BaseGQLModel):
         return result
        
 
-
-#     @strawberryA.field(description="""List""")
-#     async def editor(self, info: strawberryA.types.Info) -> 'SurveyEditorGQLModel':
-#         return self
-
-# @strawberryA.federation.type(keys=["id"], description="""Editor""") ###############
-# class SurveyEditorGQLModel:
-#     pass
-
 #############################################################
 #
 # Queries
@@ -91,15 +72,6 @@ async def survey_by_id(
     ) -> typing.Optional[SurveyGQLModel]:
         result = await SurveyGQLModel.resolve_reference(info=info,  id=id)
         return result
-
-# @strawberryA.field(description="""Page of surveys""")
-# async def survey_page(
-#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
-#     ) -> typing.List[SurveyGQLModel]:
-#         loader = getLoaders(info).surveys
-#         result = await loader.page(skip, limit)
-#         return result
-
 
 
 from dataclasses import dataclass
@@ -114,9 +86,6 @@ class SurveyWhereFilter:
     id: uuid.UUID
     createdby: uuid.UUID
 
-    # from .SurveyTypeGQLModel import SurveyTypeWhereFilter
-    # type: SurveyTypeWhereFilter
-
 @strawberryA.field(description="Allows showing and filtering survey information")
 async def survey_page(
     self, info: strawberryA.types.Info, skip: int = 0, limit: int = 10,
@@ -127,35 +96,32 @@ async def survey_page(
     result = await loader.page(skip, limit, where=wf)
     return result    
 
-     
-###########################################################################################################################
+#############################################################
 #
+# Models
 #
-# Mutations
-#
-#
-###########################################################################################################################
+#############################################################    
 from typing import Optional
 import datetime
 
 @strawberryA.input
 class SurveyInsertGQLModel:
-    name: typing.Optional[str] = None
-    name_en: typing.Optional[str] = ""
-    type_id: typing.Optional[uuid.UUID] = None
+    name: typing.Optional[str] = strawberryA.field(description="Name of survey", default=None)
+    name_en: typing.Optional[str] = strawberryA.field(description="english name of survey", default=None)
+    type_id: typing.Optional[uuid.UUID] = strawberryA.field(description="The ID of the survey type", default=None)
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
 @strawberryA.input
 class SurveyUpdateGQLModel:
-    lastchange: datetime.datetime
+    lastchange: datetime.datetime = strawberryA.field(description="Timestamp of the last change")
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    name: typing.Optional[str] = None
-    name_en: typing.Optional[str] = None
-    type_id: typing.Optional[uuid.UUID] = None
+    name: typing.Optional[str] = strawberryA.field(description="name of survey update", default=None)
+    name_en: typing.Optional[str] = strawberryA.field(description="english name of survey update", default=None)
+    type_id: typing.Optional[uuid.UUID] = strawberryA.field(description="ID of survey type", default=None)
     
 @strawberryA.type
 class SurveyResultGQLModel:
     id: strawberryA.ID = strawberryA.field(default=None, description="primary key value")
-    msg: str = None
+    msg: str = strawberryA.field(description="check message", default=None) 
 
     @strawberryA.field(description="""Result of survey operation""")
     async def survey(self, info: strawberryA.types.Info) -> typing.Optional[SurveyGQLModel]:
@@ -169,8 +135,16 @@ class SurveyDeleteGQLModel:
 @strawberryA.type
 class SurveyDeleteResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = None 
+    msg: str = strawberryA.field(description="check message", default=None) 
     
+###########################################################################################################################
+#
+#
+# Mutations
+#
+#
+###########################################################################################################################
+
 
 @strawberryA.mutation(description="Delete the surveytype")
 async def survey_delete(

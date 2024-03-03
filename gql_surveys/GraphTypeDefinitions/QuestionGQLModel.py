@@ -99,14 +99,6 @@ async def question_by_id(
     ) -> Union[QuestionGQLModel, None]:
         return await QuestionGQLModel.resolve_reference(info = info, id=id)
 
-# @strawberryA.field(description="""Page of questions""")
-# async def question_page(
-#         self, info: strawberryA.types.Info, skip: int = 0, limit: int = 20
-#     ) -> typing.List[QuestionGQLModel]:
-#         loader = getLoaders(info).questions
-#         result = await loader.page(skip, limit)
-#         return result
-
 from dataclasses import dataclass
 from .utils import createInputs
 
@@ -121,8 +113,6 @@ class QuestionWhereFilter:
     createdby: uuid.UUID
     order: int
 
-    # from .QuestionTypeGQLModel import QuestionTypeWhereFilter
-    # type: QuestionTypeWhereFilter
 
 @strawberryA.field(description="Allows showing and filtering question information")
 async def question_page(
@@ -149,26 +139,26 @@ import datetime
 
 @strawberryA.input
 class QuestionInsertGQLModel:
-    name: typing.Optional[str] = None
-    survey_id: typing.Optional[uuid.UUID] = None
-    name_en: typing.Optional[str] = ""
-    type_id: typing.Optional[uuid.UUID] = None
+    name: typing.Optional[str] = strawberryA.field(description="Name of question", default=None)
+    survey_id: typing.Optional[uuid.UUID] = strawberryA.field(description="The ID of the associated survey", default=None)
+    name_en: typing.Optional[str] = strawberryA.field(description="The english name of the associated question", default=None)
+    type_id: typing.Optional[uuid.UUID] = strawberryA.field(description="The ID of the question type", default=None)
     order: typing.Optional[int] = strawberryA.field(description="Position in parent entity", default=None)
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)   
 @strawberryA.input
 class QuestionUpdateGQLModel:
-    lastchange: datetime.datetime
+    lastchange: datetime.datetime = strawberryA.field(description="Timestamp of the last change")
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    name: typing.Optional[str] = None
-    name_en: typing.Optional[str] = None
-    type_id: typing.Optional[uuid.UUID] = None
-    order: typing.Optional[int] = None
+    name: typing.Optional[str] = strawberryA.field(description="Name of question", default=None)
+    name_en: typing.Optional[str] = strawberryA.field(description="The english name of the associated question", default=None)
+    type_id: typing.Optional[uuid.UUID] =  strawberryA.field(description="The ID of the question type", default=None)
+    order: typing.Optional[int] = strawberryA.field(description="Position in parent entity", default=None)
     
 
 @strawberryA.type
 class QuestionResultGQLModel:
-    id: uuid.UUID = None
-    msg: str = None
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    msg: str = strawberryA.field(description="Result of the operation (OK/Fail)", default=None) 
 
     @strawberryA.field(description="""Result of question operation""")
     async def question(self, info: strawberryA.types.Info) -> Union[QuestionGQLModel, None]:
@@ -182,7 +172,7 @@ class QuestionDeleteGQLModel:
 @strawberryA.type
 class QuestionDeleteResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = None 
+    msg: str = strawberryA.field(description="Result of the operation (OK/Fail)", default=None)
     
 #############################################################
 #

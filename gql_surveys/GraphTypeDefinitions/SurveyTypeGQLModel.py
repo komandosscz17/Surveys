@@ -90,28 +90,27 @@ async def survey_type_page(
     wf = None if where is None else strawberryA.asdict(where)
     result = await loader.page(skip=skip, limit=limit, where=wf)
     return result
-
 #############################################################
 #
-# Mutations
+# Models
 #
 #############################################################
 @strawberryA.input
 class SurveyTypeUpdateGQLModel:
-    lastchange: datetime.datetime
+    lastchange: datetime.datetime = strawberryA.field(description="Timestamp of the last change")
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    name: typing.Optional[str] = None
-    name_en: typing.Optional[str] = None
+    name: typing.Optional[str] = strawberryA.field(description="Name of SurveyTypeUpdate")
+    name_en: typing.Optional[str] = strawberryA.field(description="english name of SurveyTypeUpdate")
 
 @strawberryA.input
 class SurveyTypeInsertGQLModel:
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
-    name:typing.Optional[str] = None
+    name:typing.Optional[str] = strawberryA.field(description="Name of SurveyTypeInsert")
     
 @strawberryA.type
 class SurveyTypeResultGQLModel:
-    id: uuid.UUID
-    msg: str = None
+    id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
+    msg: str = strawberryA.field(description="Result of the operation (OK/Fail)", default=None)
     
     @strawberryA.field(description="subject of operation")
     async def survey_type(self, info: strawberryA.types.Info) -> SurveyTypeGQLModel:
@@ -124,8 +123,14 @@ class SurveytypeDeleteGQLModel:
 @strawberryA.type
 class SurveytypeDeleteResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = None 
+    msg: str = strawberryA.field(description="Result of the operation (OK/Fail)", default=None)
     
+#############################################################
+#
+# Mutations
+#
+#############################################################
+
 
 @strawberryA.mutation(description="Delete the surveytype")
 async def surveytype_delete(

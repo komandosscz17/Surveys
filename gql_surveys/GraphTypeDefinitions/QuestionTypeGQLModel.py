@@ -87,36 +87,39 @@ async def question_type_page(
     wf = None if where is None else strawberryA.asdict(where)
     result = await loader.page(skip=skip, limit=limit, where=wf)
     return result
-############################################################
+#############################################################
 #
-# Mutations
+# Models
 #
 #############################################################
 @strawberryA.input
 class QuestionTypeUpdateGQLModel:
-    lastchange: datetime.datetime
+    lastchange: datetime.datetime = strawberryA.field(description="Timestamp of the last change")
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    name: typing.Optional[str] = None
+    name: typing.Optional[str] = strawberryA.field(description="Name of QuestionTypeUpdate", default=None)
     
     
     
 @strawberryA.input
 class QuestionTypeInsertGQLModel:
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
-    name:typing.Optional[str] = None
+    name:typing.Optional[str] = strawberryA.field(description="Name of QuestionTypeInsert", default=None)
 
 @strawberryA.type
 class QuestionTypeResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = None
+    msg: str = strawberryA.field(description="Result of the operation (OK/Fail)", default=None) 
 
     
     @strawberryA.field(description="subject of operation")
     async def question_type(self, info: strawberryA.types.Info) -> QuestionTypeGQLModel:
         return await QuestionTypeGQLModel.resolve_reference(info, self.id)
     
-        
-
+############################################################
+#
+# Mutations
+#
+#############################################################
 
 @strawberryA.mutation(description="""Updates question value / possible answer""")
 async def questionType_update(self, info: strawberryA.types.Info, questionType: QuestionTypeUpdateGQLModel) -> QuestionTypeResultGQLModel:

@@ -22,11 +22,11 @@ class SurveyTypeModel(BaseModel):
     __tablename__ = "surveytypes"
 
     id = UUIDColumn()
-    name = Column(String)
-    name_en = Column(String)
+    name = Column(String, comment= "name of survey type")
+    name_en = Column(String, comment = "english name of survey type")
 
-    created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
-    lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now())
+    created = Column(DateTime, server_default=sqlalchemy.sql.func.now(),   comment="Timestamp when the financial information category was created")
+    lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now(), comment="Timestamp of the last change to the financial information category")
     createdby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
     changedby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
 

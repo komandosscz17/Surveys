@@ -87,13 +87,11 @@ async def questionValue_page(
     wf = None if where is None else strawberryA.asdict(where)
     result = await loader.page(skip=skip, limit=limit, where=wf)
     return result
-
 #############################################################
 #
-# Mutations
+# Models
 #
 #############################################################
-
 from typing import Optional
 import datetime
 
@@ -101,18 +99,18 @@ import datetime
 @strawberryA.input
 class QuestionValueInsertGQLModel:
     question_id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    name: typing.Optional[str] = None
-    name_en: typing.Optional[str] = ""   
-    order: typing.Optional[int] = None
+    name: typing.Optional[str] = strawberryA.field(description="name of the associated question value", default=None)
+    name_en: typing.Optional[str] = strawberryA.field(description="The english name of the associated question value", default=None) 
+    order: typing.Optional[int] = strawberryA.field(description="Position in parent entity", default=None)
     id: typing.Optional[uuid.UUID] = strawberryA.field(description="primary key (UUID), could be client generated", default=None)
 
 @strawberryA.input
 class QuestionValueUpdateGQLModel:
-    lastchange: datetime.datetime
+    lastchange: datetime.datetime = strawberryA.field(description="Timestamp of the last change")
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    name: typing.Optional[str] = None
-    name_en: typing.Optional[str] = None
-    order: typing.Optional[int] = None
+    name: typing.Optional[str] = strawberryA.field(description="name of the associated question value update", default=None)
+    name_en: typing.Optional[str] = strawberryA.field(description="The english name of the associated question value update", default=None) 
+    order: typing.Optional[int] = strawberryA.field(description="Position in parent entity", default=None)
     
 @strawberryA.input(description="Input structure - D operation")
 class QuestionValueDeleteGQLModel:
@@ -121,7 +119,7 @@ class QuestionValueDeleteGQLModel:
 @strawberryA.type
 class QuestionValueResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = None 
+    msg: str = strawberryA.field(description="check message", default=None) 
 
     @strawberryA.field(description="""Result of question operation""")
     async def question(self, info: strawberryA.types.Info) -> Union[QuestionValueGQLModel, None]:
@@ -130,7 +128,16 @@ class QuestionValueResultGQLModel:
 @strawberryA.type
 class QuestionValueDeleteResultGQLModel:
     id: uuid.UUID = strawberryA.field(description="primary key (UUID), identifies object of operation")
-    msg: str = None 
+    msg: str = strawberryA.field(description="check message", default=None)
+
+
+#############################################################
+#
+# Mutations
+#
+#############################################################
+
+
 
 @strawberryA.mutation(description="""Creates new question value for closed question""")
 async def question_value_insert(self, info: strawberryA.types.Info, question_value: QuestionValueInsertGQLModel) -> QuestionValueResultGQLModel:

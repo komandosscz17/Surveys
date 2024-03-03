@@ -25,12 +25,12 @@ class QuestionValueModel(BaseModel):
     __tablename__ = "surveyquestionvalues"
 
     id = UUIDColumn()
-    name = Column(String)  # possible answer for selection (scale, or closed question)
-    name_en = Column(String)
-    order = Column(Integer)
+    name = Column(String, comment = "name of questionvalue") 
+    name_en = Column(String, comment = "name of questionvalue in english")
+    order = Column(Integer, comment = "order of queationvalues")
     question_id = Column(ForeignKey("surveyquestions.id"), index=True)
     
-    created = Column(DateTime, server_default=sqlalchemy.sql.func.now())
-    lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now())
+    created = Column(DateTime, server_default=sqlalchemy.sql.func.now(), comment="Timestamp when the financial information category was created")
+    lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now(), comment="Timestamp of the last change to the financial information category")
     createdby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
     changedby = UUIDFKey(nullable=True)#Column(ForeignKey("users.id"), index=True, nullable=True)
