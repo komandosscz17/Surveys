@@ -134,6 +134,16 @@ class StrFilter:
     _startswith: typing.Optional[str] = strawberry.field(name="_startswith", description="operation for select.filter() method", default=None)
     _endswith: typing.Optional[str] = strawberry.field(name="_endswith", description="operation for select.filter() method", default=None)
 
+# _eq: Equal operation.
+# _le: Less than or equal to operation.
+# _lt: Less than operation.
+# _ge: Greater than or equal to operation.
+# _gt: Greater than operation.
+# _like: Like operation.
+# _ilike: Case-insensitive like operation.
+# _startswith: Starts with operation.
+    
+    
 @strawberry.input(description="Datetime filter methods, only one constrain allowed")
 class DatetimeFilter:
     _eq: typing.Optional[datetime.datetime] = strawberry.field(name="_eq", description="operation for select.filter() method", default=None)
